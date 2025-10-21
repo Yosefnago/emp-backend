@@ -38,7 +38,7 @@ public class EmployeeController {
 
     @Operation(summary = "get employee by id")
     @GetMapping("/{id}")
-    public ResponseEntity<?> getEmployeeById(String personalId) {
+    public ResponseEntity<?> getEmployeeById(@PathVariable("id") String personalId) {
 
         Employees fullDetails = employeesService.getEmployeeByPersonalId(personalId);
         return ResponseEntity.ok(fullDetails);
