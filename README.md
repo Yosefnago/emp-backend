@@ -76,6 +76,7 @@ Sensitive endpoints are protected via SecurityFilterChain.
 📬 Contact
 
 Developed by Yosef Nago
+
 GitHub: github.com/Yosefnago
 
 Email: yosinago5@gmail.com
