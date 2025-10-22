@@ -2,7 +2,6 @@ package com.ms.sw.controller;
 
 
 import com.ms.sw.Dto.user.*;
-import com.ms.sw.customUtils.CurrentUser;
 import com.ms.sw.entity.User;
 import com.ms.sw.service.JwtService;
 import com.ms.sw.service.UserService;
@@ -41,11 +40,6 @@ public class UserController {
 
         userService.register(userRegisterRequest.username(), userRegisterRequest.email(),userRegisterRequest.password());
         return ResponseEntity.ok(new UserRegisterResponse("Register successful"));
-    }
-
-    @PostMapping("logout")
-    public ResponseEntity<UserLogoutResponse> logout(@CurrentUser User user) {
-        return userService.logout(user.getUsername());
     }
 
 

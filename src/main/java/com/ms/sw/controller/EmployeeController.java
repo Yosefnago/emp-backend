@@ -6,7 +6,6 @@ import com.ms.sw.entity.Employees;
 import com.ms.sw.entity.User;
 import com.ms.sw.service.EmployeesService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,8 +36,8 @@ public class EmployeeController {
     }
 
     @Operation(summary = "get employee by id")
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getEmployeeById(@PathVariable("id") String personalId) {
+    @GetMapping("/{personalId}")
+    public ResponseEntity<?> getEmployeeById(@PathVariable("personalId") String personalId) {
 
         Employees fullDetails = employeesService.getEmployeeByPersonalId(personalId);
         return ResponseEntity.ok(fullDetails);
@@ -66,6 +65,12 @@ public class EmployeeController {
 
         employeesService.deleteEmployee(id);
         return ResponseEntity.ok().build();
+    }
+
+    @Operation(summary = "loads the number of employees that a user have")
+    @GetMapping("/loadNumberOfEmployees")
+    public int loadNumberOfEmployees(@CurrentUser User user) {
+        return employeesService.loadNumberOfEmployees(user.getUsername());
     }
 
     @GetMapping("/test")

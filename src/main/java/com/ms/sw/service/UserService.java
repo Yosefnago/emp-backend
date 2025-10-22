@@ -1,15 +1,10 @@
 package com.ms.sw.service;
 
-import com.ms.sw.Dto.user.UserLogoutResponse;
 import com.ms.sw.entity.User;
 import com.ms.sw.exception.auth.InvalidCredentialsException;
 import com.ms.sw.exception.auth.UserAlreadyExistsException;
-import com.ms.sw.exception.auth.UserNotFoundException;
 import com.ms.sw.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -57,11 +52,5 @@ public class UserService {
     }
 
 
-    public ResponseEntity<UserLogoutResponse> logout(String username) {
 
-        SecurityContextHolder.clearContext();
-
-         return ResponseEntity.ok(new UserLogoutResponse("User "+ username ," logged out successfully."));
-
-    }
 }

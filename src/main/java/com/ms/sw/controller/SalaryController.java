@@ -2,10 +2,8 @@ package com.ms.sw.controller;
 
 import com.ms.sw.customUtils.CurrentUser;
 import com.ms.sw.entity.User;
-import com.ms.sw.service.EmployeesService;
 import com.ms.sw.service.SalaryService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

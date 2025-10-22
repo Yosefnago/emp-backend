@@ -7,6 +7,7 @@ import com.ms.sw.entity.User;
 import com.ms.sw.exception.employees.AddEmployeeException;
 import com.ms.sw.exception.employees.EmployeesNotFoundException;
 import com.ms.sw.repository.EmployeeRepository;
+import com.ms.sw.repository.UserRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -18,9 +19,11 @@ import java.util.List;
 public class EmployeesService {
 
     private final EmployeeRepository employeeRepository;
+    private final UserRepository userRepository;
 
     @Autowired
-    public EmployeesService(EmployeeRepository employeeRepository) {
+    public EmployeesService(EmployeeRepository employeeRepository,UserRepository userRepository) {
+        this.userRepository =  userRepository;
         this.employeeRepository = employeeRepository;
     }
 
@@ -80,5 +83,8 @@ public class EmployeesService {
         emp.setStatus(updateEmployeeDetailsRequest.status());
 
         employeeRepository.save(emp);
+    }
+    public int loadNumberOfEmployees(String username) {
+        return userRepository.loadNumberOfEmployeesByUsername(username);
     }
 }
