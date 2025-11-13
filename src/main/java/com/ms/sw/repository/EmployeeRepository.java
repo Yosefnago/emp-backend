@@ -39,5 +39,10 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
     Optional<Employees> findByPersonalIdAndOwner(@Param("personalId") String personalId,
                                                  @Param("username") String username);
 
+    @Query("""
+       select e
+       from Employees e
+       where e.personalId = :personalId
+       """)
     Employees getEmployeesByPersonalId(String personalId);
 }
