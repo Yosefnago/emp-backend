@@ -9,6 +9,7 @@ import com.ms.sw.exception.employees.EmployeesNotFoundException;
 import com.ms.sw.repository.EmployeeRepository;
 import com.ms.sw.repository.UserRepository;
 import jakarta.validation.Valid;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -16,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
+@Slf4j
 public class EmployeesService {
 
     private final EmployeeRepository employeeRepository;
@@ -29,7 +31,11 @@ public class EmployeesService {
 
     public List<Employees> getAllEmployees(String username) {
 
+        log.info("EmployeesService::getAllEmployees invoked by user '{}'", username);
+
         List<Employees> employees = employeeRepository.getAllEmployeesByOwner(username);
+
+        log.info("EmployeesService::getAllEmployees returned {} employees for user '{}'");
         if (employees.isEmpty()) {
             return List.of();
         }
@@ -38,8 +44,9 @@ public class EmployeesService {
 
     @Transactional
     public Employees addEmployee(AddEmployeeRequest addEmployeeRequest, User user) {
-
+        log.info("EmployeesService::addEmployee invoked by user '{}'", user.getUsername());
         try {
+            log.info("EmployeesService.addEmployee called with username {}", user.getUsername());
             Employees employee = new Employees();
 
             employee.setFirstName(addEmployeeRequest.firstName());
@@ -54,24 +61,36 @@ public class EmployeesService {
             employee.setUpdatedAt(addEmployeeRequest.updatedAt());
             employee.setUser(user);
 
+            log.info("EmployeesService::addEmployee successfully saved employee for user '{}'",
+                     user.getUsername());
 
             return employeeRepository.save(employee);
 
 
         } catch (RuntimeException e) {
+            log.error("EmployeesService::addEmployee failed for user '{}': {}",
+                    user.getUsername(), e.getMessage());
             throw new AddEmployeeException("Error while adding employee ");
         }
 
     }
     public Employees getEmployeeByPersonalId(String personalId) {
+
+        log.info("EmployeesService::getEmployeeByPersonalId invoked with personalId '{}'", personalId);
         return employeeRepository.getEmployeesByPersonalId(personalId);
     }
     public void deleteEmployee(String id) {
+
+        log.info("EmployeesService::deleteEmployee invoked with personalId '{}'", id);
         employeeRepository.deleteEmployeesByPersonalId(id);
     }
 
     @Transactional
     public void updateEmployeeDetails(@Valid UpdateEmployeeDetailsRequest updateEmployeeDetailsRequest, String username) {
+
+        log.info("EmployeesService::updateEmployeeDetails invoked by user '{}' for personalId '{}'",
+                username, updateEmployeeDetailsRequest.personal_id());
+
         Employees emp = employeeRepository.findByPersonalIdAndOwner(updateEmployeeDetailsRequest.personal_id(),username)
                 .orElseThrow(() -> new EmployeesNotFoundException("Employee not found"));
 
@@ -82,9 +101,13 @@ public class EmployeesService {
         emp.setDepartment(updateEmployeeDetailsRequest.department());
         emp.setStatus(updateEmployeeDetailsRequest.status());
 
+        log.info("EmployeesService::updateEmployeeDetails successfully updated personalId '{}' for user '{}'",
+                updateEmployeeDetailsRequest.personal_id(), username);
         employeeRepository.save(emp);
     }
     public int loadNumberOfEmployees(String username) {
+
+        log.info("EmployeesService::loadNumberOfEmployees invoked by user '{}'", username);
         return userRepository.loadNumberOfEmployeesByUsername(username);
     }
 }

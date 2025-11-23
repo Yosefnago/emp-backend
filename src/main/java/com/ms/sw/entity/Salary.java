@@ -24,8 +24,6 @@ public class Salary {
     @JsonBackReference
     private Employees employee;
 
-    @Column(name = "personal_id",unique = true, nullable = false)
-    private String personalId;
 
     @Column(name = "salary_per_hour")
     private double salaryPerHour;

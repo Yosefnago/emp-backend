@@ -42,4 +42,10 @@ public interface SalaryRepository extends JpaRepository<Salary, Long> {
     """)
     Double getBonusByPersonalId(@Param("personalId") String personalId);
 
+    @Query("""
+        SELECT s
+        FROM Salary s
+        WHERE s.employee.personalId = :personalId
+        """)
+    Salary getSalaryDetailsByPersonalId(@Param("personalId") String personalId);
 }
