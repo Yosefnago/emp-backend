@@ -4,7 +4,6 @@ import com.ms.sw.entity.Employees;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -45,4 +44,7 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
        where e.personalId = :personalId
        """)
     Employees getEmployeesByPersonalId(String personalId);
+
+
+    Optional<Employees> findByPersonalId(String personalId);
 }
