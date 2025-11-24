@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
 import java.util.List;
 
 @Tag(name = "Files", description = "files controllers")
@@ -32,19 +34,27 @@ public class FilesController {
     }
 
     @PostMapping("/upload/{personalId}")
-    public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable String personalId) {
-        log.info("file upload request: {}", file.getOriginalFilename());
-        Documents saved = filesService.saveFile(file,personalId);
+    public ResponseEntity<?> uploadFile(@RequestParam("file")  List<MultipartFile> files, @PathVariable String personalId) {
+        log.info("file upload request: {}");
 
-        FileDto dto = new FileDto(
-                saved.getId(),
-                filesService.extractFileName(saved.getFilePath()),
-                saved.getFilePath(),
-                saved.getUploadedAt(),
-                saved.getEmployee().getPersonalId()
-        );
+        List<Documents> savedDocs = new ArrayList<>();
 
-        return ResponseEntity.ok(dto);
+        for (MultipartFile file : files) {
+            Documents saved = filesService.saveFile(file, personalId);
+            savedDocs.add(saved);
+        }
+
+        List<FileDto> dtos = savedDocs.stream()
+                .map(saved -> new FileDto(
+                        saved.getId(),
+                        filesService.extractFileName(saved.getFilePath()),
+                        saved.getFilePath(),
+                        saved.getUploadedAt(),
+                        saved.getEmployee().getPersonalId()
+                ))
+                .toList();
+
+        return ResponseEntity.ok(dtos);
     }
     @DeleteMapping("/delete/{fileName}")
     public ResponseEntity<Void> deleteFile(@PathVariable String fileName) {

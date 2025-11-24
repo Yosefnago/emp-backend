@@ -59,7 +59,7 @@ public class FilesService {
             String uploadDir = System.getProperty("user.dir") + "/uploads/";
             Files.createDirectories(Path.of(uploadDir));
 
-            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
+            String fileName = file.getOriginalFilename();
             Path filePath = Path.of(uploadDir + fileName);
 
             file.transferTo(filePath.toFile());
