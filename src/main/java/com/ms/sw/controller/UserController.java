@@ -3,6 +3,7 @@ package com.ms.sw.controller;
 
 import com.ms.sw.Dto.user.*;
 import com.ms.sw.entity.User;
+import com.ms.sw.exception.auth.InvalidCredentialsException;
 import com.ms.sw.service.JwtService;
 import com.ms.sw.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -30,15 +31,20 @@ public class UserController {
 
     @PostMapping("/login")
     public ResponseEntity<UserLoginResponse> login(@RequestBody @Valid UserLoginRequest request) {
-        Optional<User> user = userService.login(request.username(), request.password());
-        String token = jwtService.generateToken(user.get().getUsername());
+        Optional<User> userOptional = userService.login(request.username(), request.password());
+
+        if (userOptional.isEmpty()) {
+            throw new InvalidCredentialsException("Login failed");
+        }
+
+        String token = jwtService.generateToken(userOptional.get().getUsername());
         return ResponseEntity.ok(new UserLoginResponse("Login successful", token));
     }
 
     @PostMapping("/register")
     public ResponseEntity<UserRegisterResponse> register(@RequestBody @Valid UserRegisterRequest userRegisterRequest) {
 
-        userService.register(userRegisterRequest.username(), userRegisterRequest.email(),userRegisterRequest.password());
+        userService.register(userRegisterRequest);
         return ResponseEntity.ok(new UserRegisterResponse("Register successful"));
     }
 

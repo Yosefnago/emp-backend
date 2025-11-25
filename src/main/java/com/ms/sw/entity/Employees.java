@@ -36,6 +36,9 @@ public class Employees {
     @Column(name = "phone")
     private String phone;
 
+    @Column(name = "address")
+    private String address;
+
     @Column(name = "position")
     private String position;
 

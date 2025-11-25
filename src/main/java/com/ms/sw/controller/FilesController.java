@@ -1,11 +1,14 @@
 package com.ms.sw.controller;
 
 import com.ms.sw.Dto.FileDto;
+import com.ms.sw.customUtils.CurrentUser;
 import com.ms.sw.entity.Documents;
+import com.ms.sw.entity.User;
 import com.ms.sw.service.FilesService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ContentDisposition;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,22 +28,23 @@ public class FilesController {
         this.filesService = filesService;
     }
 
-    @Operation(summary = "get files for employee by id")
+    @Operation(summary = "Get files for employee by ID")
     @GetMapping("/{personalId}")
-    public ResponseEntity<List<FileDto>> getFilesForEmployee(@PathVariable String personalId) {
+    public ResponseEntity<List<FileDto>> getFilesForEmployee(@CurrentUser User user, @PathVariable String personalId) {
 
-        log.info("get files for employee by id: {}", personalId);
-        return ResponseEntity.ok(filesService.getAllFiles(personalId));
+        log.info("Get files for employee {} by user: {}", personalId, user.getUsername());
+        return ResponseEntity.ok(filesService.getAllFiles(personalId, user.getUsername()));
     }
 
     @PostMapping("/upload/{personalId}")
-    public ResponseEntity<?> uploadFile(@RequestParam("file")  List<MultipartFile> files, @PathVariable String personalId) {
-        log.info("file upload request: {}");
+    public ResponseEntity<?> uploadFile(@CurrentUser User user, @RequestParam("file") List<MultipartFile> files, @PathVariable String personalId) {
+
+        log.info("File upload request for employee {} by user: {}", personalId, user.getUsername());
 
         List<Documents> savedDocs = new ArrayList<>();
 
         for (MultipartFile file : files) {
-            Documents saved = filesService.saveFile(file, personalId);
+            Documents saved = filesService.saveFile(file, personalId, user.getUsername());
             savedDocs.add(saved);
         }
 
@@ -56,23 +60,38 @@ public class FilesController {
 
         return ResponseEntity.ok(dtos);
     }
-    @DeleteMapping("/delete/{fileName}")
-    public ResponseEntity<Void> deleteFile(@PathVariable String fileName) {
-        log.info("delete file: {}", fileName);
+    @DeleteMapping("/delete/{documentId}")
+    public ResponseEntity<Void> deleteFile(@CurrentUser User user, @PathVariable Long documentId) {
 
-        filesService.deleteFile(fileName);
+        log.info("Delete file ID {} requested by user: {}", documentId, user.getUsername());
+
+        filesService.deleteFile(documentId, user.getUsername());
         return ResponseEntity.noContent().build();
     }
     @Operation(summary = "Show file content in-line (e.g., in a browser tab)")
-    @GetMapping("/show/{id}") // Relative path: /files/show/{id}
-    public ResponseEntity<byte[]> show(@PathVariable Long id)  {
-        log.info("Serving file request for ID: {}", id);
-        return filesService.buildInlineFileResponse(id);
+    @GetMapping("/show/{id}")
+    public ResponseEntity<byte[]> show(@CurrentUser User user, @PathVariable Long id) {
+
+        log.info("Serving file request for ID: {} requested by user: {}", id, user.getUsername());
+        return filesService.buildInlineFileResponse(id, user.getUsername());
     }
-    @GetMapping("/download/{fileName}")
-    public ResponseEntity<byte[]> downloadFile(@PathVariable String fileName) {
-        log.info("Downloading file from fileName: {}", fileName);
-        return filesService.buildDownloadResponse(fileName);
+    @Operation(summary = "Download file content")
+    @GetMapping("/download/{id}")
+    public ResponseEntity<byte[]> downloadFile(@CurrentUser User user, @PathVariable Long id) {
+
+        log.info("Download request for ID: {} requested by user: {}", id, user.getUsername());
+
+        ResponseEntity<byte[]> response = filesService.buildInlineFileResponse(id, user.getUsername());
+
+        response.getHeaders().setContentDisposition(
+                ContentDisposition.builder("attachment")
+                        .filename(response.getHeaders().getContentDisposition().getFilename())
+                        .build()
+        );
+
+        response.getHeaders().remove("X-Content-Type-Options");
+
+        return response;
     }
 
 }

@@ -1,8 +1,8 @@
 package com.ms.sw.controller;
 
 import com.ms.sw.Dto.employee.*;
+import com.ms.sw.config.swagger.apiAnnotations.GetEmployeeByPersonalIdApi;
 import com.ms.sw.customUtils.CurrentUser;
-import com.ms.sw.entity.Employees;
 import com.ms.sw.entity.User;
 import com.ms.sw.service.EmployeesService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -27,23 +27,26 @@ public class EmployeeController {
 
     @Autowired
     public EmployeeController(EmployeesService employeesService) {
+
         this.employeesService = employeesService;
     }
 
-    @Operation(summary = "get all employees")
     @GetMapping("/loadAll")
-    public List<Employees> getAllEmployees(@CurrentUser User user) {
+    public ResponseEntity<List<EmployeeListResponse>> getAllEmployees(@CurrentUser User user) {
 
         log.info("EmployeesController::getAllEmployees invoked by user '{}'", user.getUsername());
-        return employeesService.getAllEmployees(user.getUsername());
+        List<EmployeeListResponse> employees = employeesService.getAllEmployees(user.getUsername());
+        return ResponseEntity.ok(employees);
     }
 
-    @Operation(summary = "get employee by id")
+    @GetEmployeeByPersonalIdApi
     @GetMapping("/{personalId}")
-    public ResponseEntity<?> getEmployeeById(@PathVariable("personalId") String personalId) {
+    public ResponseEntity<EmployeeDetailsResponse> getEmployeeById(@CurrentUser User user, @PathVariable("personalId") String personalId) {
 
-        log.info("EmployeesController::getEmployeeById invoked by user '{}'", personalId);
-        Employees fullDetails = employeesService.getEmployeeByPersonalId(personalId);
+        log.info("EmployeesController::getEmployeeById invoked by user '{}' for personalId '{}'", user.getUsername(), personalId);
+
+        EmployeeDetailsResponse fullDetails = employeesService.getEmployeeByPersonalId(personalId, user.getUsername());
+
         return ResponseEntity.ok(fullDetails);
     }
 
@@ -52,6 +55,7 @@ public class EmployeeController {
     public ResponseEntity<AddEmployeeResponse> addEmployee(@CurrentUser User user, @RequestBody @Valid AddEmployeeRequest addEmployeeRequest) {
 
         log.info("EmployeesController::addEmployee invoked by user '{}'", user.getUsername());
+
         employeesService.addEmployee(addEmployeeRequest,user);
         return ResponseEntity.ok(new AddEmployeeResponse("Employee added successfully"));
     }
@@ -61,17 +65,18 @@ public class EmployeeController {
     public ResponseEntity<UpdateEmployeeDetailsResponse> updateEmployeeDetails(@CurrentUser User user, @RequestBody @Valid UpdateEmployeeDetailsRequest updateEmployeeDetailsRequest){
 
         log.info("EmployeesController::updateEmployeeDetails invoked by user '{}'", user.getUsername());
-        employeesService.updateEmployeeDetails(updateEmployeeDetailsRequest,user.getUsername());
 
+        employeesService.updateEmployeeDetails(updateEmployeeDetailsRequest,user.getUsername());
         return ResponseEntity.ok(new UpdateEmployeeDetailsResponse("Employee details updated"));
     }
 
     @Operation(summary = "delete employee by id")
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Void> deleteEmployee(@PathVariable String id) {
+    public ResponseEntity<Void> deleteEmployee(@CurrentUser User user, @PathVariable String id) {
 
-        log.info("EmployeesController::deleteEmployee invoked by user '{}'", id);
-        employeesService.deleteEmployee(id);
+        log.info("EmployeesController::deleteEmployee invoked by user '{}' for personalId '{}'", user.getUsername(), id);
+
+        employeesService.deleteEmployee(id, user.getUsername());
         return ResponseEntity.ok().build();
     }
 
@@ -80,6 +85,7 @@ public class EmployeeController {
     public int loadNumberOfEmployees(@CurrentUser User user) {
 
         log.info("EmployeesController::loadNumberOfEmployees invoked by user '{}'", user.getUsername());
+
         return employeesService.loadNumberOfEmployees(user.getUsername());
     }
 
@@ -87,6 +93,7 @@ public class EmployeeController {
     public ResponseEntity<?> testAuth(@CurrentUser User user) {
 
         log.info("EmployeesController::testAuth invoked by user '{}'", user.getUsername());
+
         return ResponseEntity.ok(Map.of("authenticatedUser", user.getUsername()));
     }
 }

@@ -2,6 +2,7 @@ package com.ms.sw.repository;
 
 import com.ms.sw.entity.Employees;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import java.util.List;
@@ -26,7 +27,13 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
     """)
     int countEmployeesByUsername(@Param("username") String username);
 
-    void deleteEmployeesByPersonalId(String id);
+    @Modifying
+    @Query("""
+         DELETE FROM Employees e 
+         WHERE e.personalId = :personalId 
+         AND e.user.username = :ownerUsername
+                  """)
+    int deleteByPersonalIdAndOwner(@Param("personalId") String personalId, @Param("ownerUsername") String ownerUsername);
 
 
     @Query("""
@@ -38,13 +45,28 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
     Optional<Employees> findByPersonalIdAndOwner(@Param("personalId") String personalId,
                                                  @Param("username") String username);
 
-    @Query("""
-       select e
-       from Employees e
-       where e.personalId = :personalId
-       """)
-    Employees getEmployeesByPersonalId(String personalId);
-
-
     Optional<Employees> findByPersonalId(String personalId);
+
+
+    @Modifying
+    @Query("""
+    UPDATE Employees e SET 
+        e.firstName = :firstName, 
+        e.lastName = :lastName, 
+        e.email = :email, 
+        e.position = :position,
+        e.department = :department,
+        e.status = :status
+    WHERE e.personalId = :personalId AND e.user.username = :username
+""")
+    int updateEmployeeDetailsByPersonalIdAndOwner(
+            @Param("personalId") String personalId,
+            @Param("username") String username,
+            @Param("firstName") String firstName,
+            @Param("lastName") String lastName,
+            @Param("email") String email,
+            @Param("position") String position,
+            @Param("department") String department,
+            @Param("status") String status
+    );
 }

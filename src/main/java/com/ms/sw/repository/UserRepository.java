@@ -16,11 +16,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByUsername(String username);
 
-    @Query("""
-        select 
-        count(e)
-        from Employees e 
-        where e.user.username = :username     
-        """)
-    int loadNumberOfEmployeesByUsername(String username);
 }

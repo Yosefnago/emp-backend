@@ -37,18 +37,20 @@ public class SalaryController {
 
     @Operation(summary = "calculate salary for employee by its personal id")
     @GetMapping("/{personalId}")
-    public ResponseEntity<BigDecimal> calculateSalaryById(@PathVariable String personalId){
+    public ResponseEntity<BigDecimal> calculateSalaryById(@CurrentUser User user, @PathVariable String personalId){
 
-        double salary = salaryService.calculateSalary(personalId);
+        log.info("SalaryController::calculateSalaryById invoked by user '{}' for employee '{}'", user.getUsername(), personalId);
+        double salary = salaryService.calculateSalary(personalId, user.getUsername());
 
         return ResponseEntity.ok(new BigDecimal(salary));
     }
 
     @GetMapping("/emp/{personalId}")
-    public ResponseEntity<SalaryDetailsPerEmployee> getSalaryDetailsPerEmployee(@PathVariable String personalId){
-        log.info("EmployeesController::getAllEmployees invoked by employee '{}'", personalId);
+    public ResponseEntity<SalaryDetailsPerEmployee> getSalaryDetailsPerEmployee(@CurrentUser User user, @PathVariable String personalId){
 
-        return ResponseEntity.ok(salaryService.getSalaryByPersonalId(personalId));
+        log.info("SalaryController::getSalaryDetailsPerEmployee invoked by user '{}' for employee '{}'", user.getUsername(), personalId);
+
+        return ResponseEntity.ok(salaryService.getSalaryByPersonalId(personalId, user.getUsername()));
     }
 
 

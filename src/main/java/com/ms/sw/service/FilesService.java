@@ -3,12 +3,15 @@ package com.ms.sw.service;
 import com.ms.sw.Dto.FileDto;
 import com.ms.sw.entity.Documents;
 import com.ms.sw.entity.Employees;
+import com.ms.sw.exception.document.DocumentNotFoundException;
+import com.ms.sw.exception.employees.EmployeesNotFoundException;
 import com.ms.sw.repository.EmployeeRepository;
 import com.ms.sw.repository.FilesRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URLEncoder;
@@ -16,6 +19,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
@@ -23,6 +27,8 @@ import java.util.UUID;
 @Service
 @Slf4j
 public class FilesService {
+
+    private static final Path UPLOAD_DIR = Paths.get(System.getProperty("user.dir"), "uploads");
 
     private FilesRepository filesRepository;
     private EmployeeRepository employeeRepository;
@@ -34,11 +40,11 @@ public class FilesService {
     }
 
 
-    public List<FileDto> getAllFiles(String personalId) {
+    public List<FileDto> getAllFiles(String personalId, String ownerUsername) {
 
-        log.info("getAllFiles personalId = {}", personalId);
+        log.info("getAllFiles personalId = {} by user {}", personalId, ownerUsername);
 
-        List<Documents> list = filesRepository.getAllFilesByPersonalId(personalId);
+        List<Documents> list = filesRepository.getAllFilesByPersonalIdAndOwner(personalId, ownerUsername);
 
         return list.stream()
                 .map(doc -> new FileDto(
@@ -50,24 +56,29 @@ public class FilesService {
                 ))
                 .toList();
     }
+
     public String extractFileName(String filePath) {
         return filePath.substring(filePath.replace("\\", "/").lastIndexOf("/") + 1);
     }
-    public Documents  saveFile(MultipartFile file, String personalId) {
-        log.info("File attempt = " + file.getOriginalFilename());
+
+    public Documents saveFile(MultipartFile file, String personalId, String ownerUsername) {
+
+        log.info("File upload attempt for file: {}", file.getOriginalFilename());
         try {
-            String uploadDir = System.getProperty("user.dir") + "/uploads/";
-            Files.createDirectories(Path.of(uploadDir));
+            Files.createDirectories(UPLOAD_DIR);
 
-            String fileName = file.getOriginalFilename();
-            Path filePath = Path.of(uploadDir + fileName);
+            Employees emp = employeeRepository.findByPersonalIdAndOwner(personalId, ownerUsername)
+                    .orElseThrow(() -> new EmployeesNotFoundException("Employee not found or unauthorized: " + personalId));
 
-            file.transferTo(filePath.toFile());
+            String originalFileName = file.getOriginalFilename();
+            String extension = "";
+            if (originalFileName != null && originalFileName.contains(".")) {
+                extension = originalFileName.substring(originalFileName.lastIndexOf("."));
+            }
+            String uniqueFileName = UUID.randomUUID().toString() + extension;
+            Path filePath = UPLOAD_DIR.resolve(uniqueFileName);
 
-            Employees emp = employeeRepository.findByPersonalId(personalId)
-                    .orElseThrow(() -> new IllegalArgumentException("Employee not found: " + personalId));
-
-
+            file.transferTo(filePath);
 
             Documents doc = new Documents();
             doc.setFilePath(filePath.toString());
@@ -76,123 +87,75 @@ public class FilesService {
 
             return filesRepository.save(doc);
 
-        } catch (Exception e) {
-            throw new RuntimeException("File upload failed", e);
+        } catch (EmployeesNotFoundException e) {
+            throw e;
+        } catch (IOException e) {
+            log.error("File upload failed for personalId {}: {}", personalId, e.getMessage(), e);
+            throw new RuntimeException("File storage failure: unable to write file to disk.", e);
+        }catch (Exception e) {
+            log.error("Unknown file upload failure for personalId {}: {}", personalId, e.getMessage(), e);
+            throw new RuntimeException("Unknown file upload failure.", e);
         }
     }
-    public void deleteFile(String fileName) {
-        log.info("File attempt = " + fileName);
-        filesRepository.deleteByFileName(fileName);
-    }
-    /**
-     * Retrieves the minimal file metadata (path and name) from the database.
-     *
-     * @param id The document ID.
-     * @return FileDto containing path and name, or null if not found.
-     */
-    public FileDto getFileMetadata(Long id) {
-        // Assuming filesRepository.findById(id) returns an Optional<Documents>
-        // and we map it to a FileDto containing the necessary path and name.
-        return filesRepository.findById(id).map(doc -> new FileDto(
-                doc.getId(),
-                extractFileName(doc.getFilePath()),
-                doc.getFilePath(),
-                doc.getUploadedAt(),
-                doc.getEmployee().getPersonalId()
-        )).orElse(null);
-    }
+    @Transactional
+    public void deleteFile(Long documentId, String ownerUsername) {
 
-    /**
-     * Builds the ResponseEntity containing the file content for in-line display.
-     * Uses Files.readAllBytes() for simple, efficient, and auto-closing resource management.
-     *
-     * @param id The document ID.
-     * @return ResponseEntity with file data and HTTP headers.
-     */
-    public ResponseEntity<byte[]> buildInlineFileResponse(Long id) {
-        FileDto dto = getFileMetadata(id);
+        log.info("File delete attempt for ID: {} by user {}", documentId, ownerUsername);
 
-        if (dto == null) {
-            log.warn("File metadata not found for ID: {}", id);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        int deletedCount = filesRepository.deleteByIdAndOwner(documentId, ownerUsername);
+
+        if (deletedCount == 0) {
+            log.warn("Deletion failed: Document ID {} not found or unauthorized.", documentId);
+            throw new DocumentNotFoundException("Document not found or unauthorized to delete.");
         }
+    }
+    public Documents getSecureDocument(Long id, String ownerUsername) {
+        return filesRepository.findByIdAndOwner(id, ownerUsername)
+                .orElseThrow(() -> new DocumentNotFoundException("Document not found or unauthorized: " + id));
+    }
 
-        Path filePath = Path.of(dto.path());
+    public ResponseEntity<byte[]> buildInlineFileResponse(Long id, String ownerUsername) {
+
+        Documents doc = getSecureDocument(id, ownerUsername);
+
+        String fileName = extractFileName(doc.getFilePath());
+        Path filePath = Path.of(doc.getFilePath());
+
         byte[] bytes;
 
         try {
-            // Read all bytes from the file. This is simple and highly efficient for files up to a few MBs.
             bytes = Files.readAllBytes(filePath);
         } catch (NoSuchFileException e) {
-            log.error("File not found on disk: {}", dto.path());
+            log.error("File not found on disk: {}", doc.getFilePath());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         } catch (IOException e) {
-            log.error("Error reading file content from disk: {}", dto.path(), e);
+            log.error("Error reading file content from disk: {}", doc.getFilePath(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
 
-        // Determine MIME Type
         String mimeType;
         try {
             mimeType = Files.probeContentType(filePath);
         } catch (IOException e) {
-            mimeType = MediaType.APPLICATION_OCTET_STREAM_VALUE; // Default to binary stream
+            mimeType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
         }
         if (mimeType == null) {
             mimeType = MediaType.APPLICATION_OCTET_STREAM_VALUE;
         }
 
-        // Build HTTP Headers
         HttpHeaders headers = new HttpHeaders();
-
-        // 1. Set Content-Type
         headers.setContentType(MediaType.parseMediaType(mimeType));
 
-        // 2. Set Content-Disposition for 'inline' display with correct UTF-8 encoding for filename
         ContentDisposition contentDisposition = ContentDisposition.builder("inline")
-                .filename(dto.name(), StandardCharsets.UTF_8)
+                .filename(fileName, StandardCharsets.UTF_8)
                 .build();
         headers.setContentDisposition(contentDisposition);
-
-        // 3. Recommended security header
         headers.add("X-Content-Type-Options", "nosniff");
 
-        // Return the file content
         return ResponseEntity.ok()
                 .headers(headers)
                 .contentLength(bytes.length)
                 .body(bytes);
     }
-    public ResponseEntity<byte[]> buildDownloadResponse(String relativePath) {
-
-        Path filePath = Path.of(System.getProperty("user.dir"), "uploads", relativePath);
-
-        if (!Files.exists(filePath)) {
-            return ResponseEntity.notFound().build();
-        }
-
-        byte[] bytes;
-        try {
-            bytes = Files.readAllBytes(filePath);
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-
-        String mimeType;
-        try {
-            mimeType = Files.probeContentType(filePath);
-        } catch (IOException e) {
-            mimeType = "application/octet-stream";
-        }
-
-        String fileName = filePath.getFileName().toString();
-
-        return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION,
-                        "attachment; filename*=UTF-8''" + URLEncoder.encode(fileName, StandardCharsets.UTF_8))
-                .contentType(MediaType.parseMediaType(mimeType))
-                .body(bytes);
-    }
-
 
 }

@@ -1,9 +1,13 @@
 package com.ms.sw.exception.global;
 
+import com.ms.sw.exception.auth.EmailAlreadyExistsException;
 import com.ms.sw.exception.auth.InvalidCredentialsException;
 import com.ms.sw.exception.auth.UserAlreadyExistsException;
 import com.ms.sw.exception.auth.UserNotFoundException;
+import com.ms.sw.exception.document.DocumentNotFoundException;
+import com.ms.sw.exception.employees.AddEmployeeException;
 import com.ms.sw.exception.employees.EmployeesNotFoundException;
+import com.ms.sw.exception.salary.SalaryNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,32 +18,33 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(UserAlreadyExistsException.class)
-    public ResponseEntity<?> handleUserExists(UserAlreadyExistsException e) {
+    @ExceptionHandler({UserAlreadyExistsException.class, EmailAlreadyExistsException.class})
+    public ResponseEntity<Map<String, String>> handleConflictExceptions() {
         return ResponseEntity
-                .status(HttpStatus.CONFLICT)
-                .body(Map.of("error", e.getMessage()));
+                .status(HttpStatus.CONFLICT) // 409
+                .body(Map.of("error", "The requested resource already exists."));
     }
 
-    @ExceptionHandler(UserNotFoundException.class)
-    public ResponseEntity<?> handleUserNotFound(UserNotFoundException e) {
+    @ExceptionHandler({UserNotFoundException.class, InvalidCredentialsException.class})
+    public ResponseEntity<Map<String, String>> handleAuthFailures() {
+        // Use a generic message for security
         return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(Map.of("error", e.getMessage()));
+                .status(HttpStatus.UNAUTHORIZED) // 401
+                .body(Map.of("error", "Authentication failed. Invalid username or password."));
     }
 
-    @ExceptionHandler(InvalidCredentialsException.class)
-    public ResponseEntity<?> handleInvalidCredentials(InvalidCredentialsException e) {
+    @ExceptionHandler({EmployeesNotFoundException.class, SalaryNotFoundException.class, DocumentNotFoundException.class})
+    public ResponseEntity<Map<String, String>> handleNotFoundExceptions() {
         return ResponseEntity
-                .status(HttpStatus.UNAUTHORIZED)
-                .body(Map.of("error", e.getMessage()));
+                .status(HttpStatus.NOT_FOUND) // 404
+                .body(Map.of("error", "The requested resource was not found."));
     }
 
-    @ExceptionHandler(EmployeesNotFoundException.class)
-    public ResponseEntity<?> handleEmployeeByIdNotFound(EmployeesNotFoundException e) {
+    @ExceptionHandler(AddEmployeeException.class)
+    public ResponseEntity<Map<String, String>> handleBadRequestExceptions() {
         return ResponseEntity
-                .status(HttpStatus.NOT_FOUND)
-                .body(Map.of("error", e.getMessage()));
+                .status(HttpStatus.BAD_REQUEST) // 400
+                .body(Map.of("error", "Invalid input or data provided. Please check your request."));
     }
 
 }

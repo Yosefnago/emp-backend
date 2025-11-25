@@ -1,11 +1,14 @@
 package com.ms.sw.repository;
 
+import com.ms.sw.Dto.salaries.SalaryCalculationProjection;
 import com.ms.sw.entity.Salary;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
+import java.util.Optional;
+
 
 public interface SalaryRepository extends JpaRepository<Salary, Long> {
 
@@ -45,7 +48,21 @@ public interface SalaryRepository extends JpaRepository<Salary, Long> {
     @Query("""
         SELECT s
         FROM Salary s
-        WHERE s.employee.personalId = :personalId
+        JOIN s.employee e
+        JOIN e.user u
+        WHERE e.personalId = :personalId AND u.username = :username
         """)
-    Salary getSalaryDetailsByPersonalId(@Param("personalId") String personalId);
+    Optional<Salary> getSalaryDetailsByPersonalIdAndOwner(@Param("personalId") String personalId, @Param("username") String username);
+
+    @Query("""
+        SELECT new com.ms.sw.Dto.salaries.SalaryCalculationProjection(s.totalHoursMonth, s.salaryPerHour, CAST(s.bonus AS double)) 
+        FROM Salary s
+        JOIN s.employee e
+        JOIN e.user u
+        WHERE e.personalId = :personalId AND u.username = :username
+    """)
+    Optional<SalaryCalculationProjection> getSalaryCalculationDataByPersonalIdAndOwner(
+            @Param("personalId") String personalId,
+            @Param("username") String username
+    );
 }
