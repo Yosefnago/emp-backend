@@ -9,6 +9,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -71,7 +72,6 @@ public class FilesController {
     @Operation(summary = "Show file content in-line (e.g., in a browser tab)")
     @GetMapping("/show/{id}")
     public ResponseEntity<byte[]> show(@CurrentUser User user, @PathVariable Long id) {
-
         log.info("Serving file request for ID: {} requested by user: {}", id, user.getUsername());
         return filesService.buildInlineFileResponse(id, user.getUsername());
     }
@@ -81,17 +81,22 @@ public class FilesController {
 
         log.info("Download request for ID: {} requested by user: {}", id, user.getUsername());
 
-        ResponseEntity<byte[]> response = filesService.buildInlineFileResponse(id, user.getUsername());
+        ResponseEntity<byte[]> inlineResponse = filesService.buildInlineFileResponse(id, user.getUsername());
 
-        response.getHeaders().setContentDisposition(
-                ContentDisposition.builder("attachment")
-                        .filename(response.getHeaders().getContentDisposition().getFilename())
+        HttpHeaders headers = new HttpHeaders();
+        headers.putAll(inlineResponse.getHeaders());
+
+        headers.setContentDisposition(
+                ContentDisposition.builder("attachment") // Change from 'inline' to 'attachment'
+                        .filename(headers.getContentDisposition().getFilename())
                         .build()
         );
 
-        response.getHeaders().remove("X-Content-Type-Options");
+        headers.remove("X-Content-Type-Options");
 
-        return response;
+        return ResponseEntity.status(inlineResponse.getStatusCode())
+                .headers(headers)
+                .body(inlineResponse.getBody());
     }
 
 }
