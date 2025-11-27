@@ -87,7 +87,7 @@ public class FilesController {
         headers.putAll(inlineResponse.getHeaders());
 
         headers.setContentDisposition(
-                ContentDisposition.builder("attachment") // Change from 'inline' to 'attachment'
+                ContentDisposition.builder("attachment")
                         .filename(headers.getContentDisposition().getFilename())
                         .build()
         );
