@@ -52,8 +52,8 @@ public class Salary {
     @Column(name = "vacation_days")
     private double vacationDays;
 
-    @Column(name = "month")
-    private String month;
+    @Column(name = "month_date")
+    private String monthDate;
 
     @Column(name = "created_at")
     private Timestamp createdAt;

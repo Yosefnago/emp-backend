@@ -1,11 +1,11 @@
 package com.ms.sw.controller;
 
+import com.dev.tools.Markers.ApiMarker;
 import com.ms.sw.Dto.FileDto;
 import com.ms.sw.customUtils.CurrentUser;
 import com.ms.sw.entity.Documents;
 import com.ms.sw.entity.User;
 import com.ms.sw.service.FilesService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ContentDisposition;
@@ -13,7 +13,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,6 +20,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/files")
 @Slf4j
+@ApiMarker
 public class FilesController {
 
     private final FilesService filesService;
@@ -29,7 +29,6 @@ public class FilesController {
         this.filesService = filesService;
     }
 
-    @Operation(summary = "Get files for employee by ID")
     @GetMapping("/{personalId}")
     public ResponseEntity<List<FileDto>> getFilesForEmployee(@CurrentUser User user, @PathVariable String personalId) {
 
@@ -61,6 +60,7 @@ public class FilesController {
 
         return ResponseEntity.ok(dtos);
     }
+
     @DeleteMapping("/delete/{documentId}")
     public ResponseEntity<Void> deleteFile(@CurrentUser User user, @PathVariable Long documentId) {
 
@@ -69,13 +69,13 @@ public class FilesController {
         filesService.deleteFile(documentId, user.getUsername());
         return ResponseEntity.noContent().build();
     }
-    @Operation(summary = "Show file content in-line (e.g., in a browser tab)")
+
     @GetMapping("/show/{id}")
     public ResponseEntity<byte[]> show(@CurrentUser User user, @PathVariable Long id) {
         log.info("Serving file request for ID: {} requested by user: {}", id, user.getUsername());
         return filesService.buildInlineFileResponse(id, user.getUsername());
     }
-    @Operation(summary = "Download file content")
+
     @GetMapping("/download/{id}")
     public ResponseEntity<byte[]> downloadFile(@CurrentUser User user, @PathVariable Long id) {
 

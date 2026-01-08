@@ -1,5 +1,8 @@
 package com.ms.sw.Dto.employee;
 
+
+import com.dev.tools.Markers.DtoMarker;
+
 /**
  * {@code EmployeeListResponse} is an immutable Data Transfer Object (DTO)
  * designed to carry a summary view of employee data.
@@ -12,6 +15,7 @@ package com.ms.sw.Dto.employee;
  * @see com.ms.sw.entity.Employees
  * @see com.ms.sw.controller.EmployeeController#getAllEmployees(com.ms.sw.entity.User)
  */
+@DtoMarker
 public record EmployeeListResponse(
         String personalId,
         String firstName,

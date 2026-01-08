@@ -13,6 +13,16 @@ import java.sql.Timestamp;
 @AllArgsConstructor
 @NoArgsConstructor
 public  class User  {
+    public User(String username, String email, String password, String role, boolean enabled, Timestamp lastLogin, Timestamp createdAt, Timestamp updatedAt) {
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.role = role;
+        this.enabled = enabled;
+        this.lastLogin = lastLogin;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -41,8 +51,5 @@ public  class User  {
 
     @Column(name = "updated_at")
     private Timestamp updatedAt;
-
-
-
 
 }

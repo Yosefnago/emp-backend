@@ -1,5 +1,8 @@
 package com.ms.sw.Dto.salaries;
 
+
+import com.dev.tools.Markers.DtoMarker;
+
 /**
  * {@code SalaryDetailsPerEmployee} is an immutable Data Transfer Object (DTO)
  * designed to convey the complete and current financial and payroll configuration
@@ -8,6 +11,7 @@ package com.ms.sw.Dto.salaries;
  * salary information (e.g., {@code GET /salary/emp/{personalId}}).
  * @see com.ms.sw.controller.SalaryController
  */
+@DtoMarker
 public record SalaryDetailsPerEmployee(
         double salaryPerHour,      // שכר שעה
         double monthlySalary,      // שכר חודשי

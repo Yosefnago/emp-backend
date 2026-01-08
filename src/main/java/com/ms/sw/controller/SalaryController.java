@@ -1,10 +1,10 @@
 package com.ms.sw.controller;
 
+import com.dev.tools.Markers.ApiMarker;
 import com.ms.sw.Dto.salaries.SalaryDetailsPerEmployee;
 import com.ms.sw.customUtils.CurrentUser;
 import com.ms.sw.entity.User;
 import com.ms.sw.service.SalaryService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +18,7 @@ import java.math.BigDecimal;
 @CrossOrigin(origins = "http://localhost:4200")
 @RequestMapping("/salary")
 @Slf4j
+@ApiMarker
 public class SalaryController {
 
     private final SalaryService salaryService;
@@ -27,15 +28,7 @@ public class SalaryController {
         this.salaryService = salaryService;
     }
 
-    @Operation(summary = "calculates all the salary of all the employees")
-    @GetMapping("/salaries")
-    public ResponseEntity<BigDecimal> calculateAllSalaries(@CurrentUser User user){
 
-        BigDecimal total = salaryService.getAllSalaryOfAllEmployees(user.getUsername());
-        return ResponseEntity.ok(total);
-    }
-
-    @Operation(summary = "calculate salary for employee by its personal id")
     @GetMapping("/{personalId}")
     public ResponseEntity<BigDecimal> calculateSalaryById(@CurrentUser User user, @PathVariable String personalId){
 

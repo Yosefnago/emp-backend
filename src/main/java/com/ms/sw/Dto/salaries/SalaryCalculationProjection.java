@@ -1,5 +1,8 @@
 package com.ms.sw.Dto.salaries;
 
+
+import com.dev.tools.Markers.DtoMarker;
+
 /**
  * {@code SalaryCalculationProjection} is an immutable Data Transfer Object (DTO)
  * specifically designed to serve as a projection of the minimum necessary data
@@ -9,6 +12,7 @@ package com.ms.sw.Dto.salaries;
  * object materialization overhead and memory footprint compared to loading a full entity.
  * @see com.ms.sw.service.SalaryService
  */
+@DtoMarker
 public record SalaryCalculationProjection(
         Double getTotalHoursMonth,
         Double getSalaryPerHour,

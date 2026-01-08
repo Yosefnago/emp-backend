@@ -1,12 +1,12 @@
 package com.ms.sw.controller;
 
 
+import com.dev.tools.Markers.ApiMarker;
 import com.ms.sw.Dto.user.*;
 import com.ms.sw.entity.User;
 import com.ms.sw.exception.auth.InvalidCredentialsException;
 import com.ms.sw.service.JwtService;
 import com.ms.sw.service.UserService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-@Tag(name = "Auth", description = "ניהול התחברות והרשמה")
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("auth")
+@ApiMarker
 public class UserController {
 
     private final UserService userService;

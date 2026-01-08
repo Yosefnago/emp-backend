@@ -19,7 +19,7 @@ public interface SalaryRepository extends JpaRepository<Salary, Long> {
         JOIN e.user u
         WHERE u.username = :username
     """)
-    BigDecimal getSalariesByOwner(@Param("username") String username);
+    long getSalariesByOwner(@Param("username") String username);
 
     @Query("""
         SELECT s.totalHoursMonth

@@ -1,5 +1,8 @@
 package com.ms.sw.Dto.user;
 
+
+import com.dev.tools.Markers.DtoMarker;
+
 /**
  * {@code UserLoginResponse} is an immutable Data Transfer Object (DTO)
  * designed to carry the necessary information back to the client upon a
@@ -11,5 +14,6 @@ package com.ms.sw.Dto.user;
  * required for accessing protected resources.
  * @see com.ms.sw.Dto.user.UserLoginRequest
  */
+@DtoMarker
 public record UserLoginResponse(String message, String token) {
 }

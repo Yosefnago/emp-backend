@@ -1,11 +1,10 @@
 package com.ms.sw.controller;
 
+import com.dev.tools.Markers.ApiMarker;
 import com.ms.sw.Dto.employee.*;
-import com.ms.sw.config.swagger.apiAnnotations.GetEmployeeByPersonalIdApi;
 import com.ms.sw.customUtils.CurrentUser;
 import com.ms.sw.entity.User;
 import com.ms.sw.service.EmployeesService;
-import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
@@ -20,6 +19,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/employees")
 @Slf4j
+@ApiMarker
 public class EmployeeController {
 
 
@@ -39,7 +39,7 @@ public class EmployeeController {
         return ResponseEntity.ok(employees);
     }
 
-    @GetEmployeeByPersonalIdApi
+
     @GetMapping("/{personalId}")
     public ResponseEntity<EmployeeDetailsResponse> getEmployeeById(@CurrentUser User user, @PathVariable("personalId") String personalId) {
 
@@ -50,7 +50,6 @@ public class EmployeeController {
         return ResponseEntity.ok(fullDetails);
     }
 
-    @Operation(summary = "add employee")
     @PostMapping("/addEmployee")
     public ResponseEntity<AddEmployeeResponse> addEmployee(@CurrentUser User user, @RequestBody @Valid AddEmployeeRequest addEmployeeRequest) {
 
@@ -60,7 +59,6 @@ public class EmployeeController {
         return ResponseEntity.ok(new AddEmployeeResponse("Employee added successfully"));
     }
 
-    @Operation(summary = "update employee details")
     @PutMapping("/updateEmployeeDetails")
     public ResponseEntity<UpdateEmployeeDetailsResponse> updateEmployeeDetails(@CurrentUser User user, @RequestBody @Valid UpdateEmployeeDetailsRequest updateEmployeeDetailsRequest){
 
@@ -70,7 +68,6 @@ public class EmployeeController {
         return ResponseEntity.ok(new UpdateEmployeeDetailsResponse("Employee details updated"));
     }
 
-    @Operation(summary = "delete employee by id")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> deleteEmployee(@CurrentUser User user, @PathVariable String id) {
 
@@ -78,15 +75,6 @@ public class EmployeeController {
 
         employeesService.deleteEmployee(id, user.getUsername());
         return ResponseEntity.ok().build();
-    }
-
-    @Operation(summary = "loads the number of employees that a user have")
-    @GetMapping("/loadNumberOfEmployees")
-    public int loadNumberOfEmployees(@CurrentUser User user) {
-
-        log.info("EmployeesController::loadNumberOfEmployees invoked by user '{}'", user.getUsername());
-
-        return employeesService.loadNumberOfEmployees(user.getUsername());
     }
 
     @GetMapping("/test")

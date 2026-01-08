@@ -1,5 +1,6 @@
 package com.ms.sw.Dto.employee;
 
+import com.dev.tools.Markers.DtoMarker;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
@@ -13,6 +14,7 @@ import jakarta.validation.constraints.NotBlank;
  * @see jakarta.validation.constraints.Email
  * @see com.ms.sw.controller.EmployeeController#updateEmployeeDetails(com.ms.sw.entity.User, UpdateEmployeeDetailsRequest)
  */
+@DtoMarker
 public record UpdateEmployeeDetailsRequest(
         @NotBlank String firstName,
         @NotBlank String lastName,

@@ -1,5 +1,6 @@
 package com.ms.sw.Dto.user;
 
+import com.dev.tools.Markers.DtoMarker;
 import jakarta.validation.constraints.NotBlank;
 
 /**
@@ -13,5 +14,6 @@ import jakarta.validation.constraints.NotBlank;
  * final and prevents accidental modification during transit or processing.
  * @see jakarta.validation.constraints.NotBlank
  */
+@DtoMarker
 public record UserLoginRequest(@NotBlank String username,@NotBlank String password) {
 }

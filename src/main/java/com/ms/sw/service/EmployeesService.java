@@ -10,7 +10,6 @@ import com.ms.sw.exception.employees.AddEmployeeException;
 import com.ms.sw.exception.employees.EmployeesNotFoundException;
 import com.ms.sw.repository.EmployeeRepository;
 import com.ms.sw.repository.UserRepository;
-import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -104,8 +103,7 @@ public class EmployeesService {
         return mapToEmployeeDetailsResponse(employee);
     }
     private EmployeeDetailsResponse mapToEmployeeDetailsResponse(Employees entity) {
-        // NOTE: The 'address' field is assumed to be part of the Employees entity
-        // or accessible via it, as it is used in the Angular template.
+
         return new EmployeeDetailsResponse(
                 entity.getFirstName(),
                 entity.getLastName(),
@@ -158,10 +156,5 @@ public class EmployeesService {
         log.info("EmployeesService::updateEmployeeDetails successfully updated personalId '{}' for user '{}'",
                 updateEmployeeDetailsRequest.personal_id(), username);
 
-    }
-    public int loadNumberOfEmployees(String username) {
-
-        log.info("EmployeesService::loadNumberOfEmployees invoked by user '{}'", username);
-        return employeeRepository.countEmployeesByUsername(username);
     }
 }

@@ -1,5 +1,7 @@
 package com.ms.sw.Dto.employee;
 
+
+import com.dev.tools.Markers.DtoMarker;
 import java.sql.Timestamp;
 import java.util.Date;
 
@@ -13,6 +15,7 @@ import java.util.Date;
  * @see com.ms.sw.controller.EmployeeController
  * @see com.ms.sw.service.EmployeesService
  */
+@DtoMarker
 public record EmployeeDetailsResponse(
         String firstName,
         String lastName,

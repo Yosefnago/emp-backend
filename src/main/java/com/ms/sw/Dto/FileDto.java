@@ -1,5 +1,7 @@
 package com.ms.sw.Dto;
 
+
+import com.dev.tools.Markers.DtoMarker;
 import java.time.LocalDateTime;
 
 /**
@@ -17,6 +19,7 @@ import java.time.LocalDateTime;
  * @see com.ms.sw.controller.FilesController
  * @see com.ms.sw.service.FilesService
  */
+@DtoMarker
 public record FileDto(
         Long id,
         String name,

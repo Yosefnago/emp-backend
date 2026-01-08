@@ -1,6 +1,7 @@
 package com.ms.sw.Dto.user;
 
 
+import com.dev.tools.Markers.DtoMarker;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
@@ -17,5 +18,6 @@ import jakarta.validation.constraints.NotBlank;
  * @see jakarta.validation.constraints.NotBlank
  * @see jakarta.validation.constraints.Email
  */
+@DtoMarker
 public record UserRegisterRequest(@NotBlank String username, @NotBlank String password, @Email String email) {
 }
