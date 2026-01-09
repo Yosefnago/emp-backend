@@ -29,9 +29,9 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
 
     @Modifying
     @Query("""
-         DELETE FROM Employees e 
-         WHERE e.personalId = :personalId 
-         AND e.user.username = :ownerUsername
+         DELETE FROM Employees e          
+         WHERE e.personalId = :personalId
+         AND e.user.username = :ownerUsername     
                   """)
     int deleteByPersonalIdAndOwner(@Param("personalId") String personalId, @Param("ownerUsername") String ownerUsername);
 

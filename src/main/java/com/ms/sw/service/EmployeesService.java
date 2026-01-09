@@ -4,6 +4,7 @@ import com.ms.sw.Dto.employee.AddEmployeeRequest;
 import com.ms.sw.Dto.employee.EmployeeDetailsResponse;
 import com.ms.sw.Dto.employee.EmployeeListResponse;
 import com.ms.sw.Dto.employee.UpdateEmployeeDetailsRequest;
+import com.ms.sw.entity.ActivityLogs;
 import com.ms.sw.entity.Employees;
 import com.ms.sw.entity.User;
 import com.ms.sw.exception.employees.AddEmployeeException;
@@ -16,7 +17,10 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -24,11 +28,13 @@ public class EmployeesService {
 
     private final EmployeeRepository employeeRepository;
     private final UserRepository userRepository;
+    private final ActivityLogsService activityLogsService;
 
     @Autowired
-    public EmployeesService(EmployeeRepository employeeRepository,UserRepository userRepository) {
+    public EmployeesService(EmployeeRepository employeeRepository,UserRepository userRepository,ActivityLogsService activityLogsService) {
         this.userRepository =  userRepository;
         this.employeeRepository = employeeRepository;
+        this.activityLogsService = activityLogsService;
     }
 
     public List<EmployeeListResponse> getAllEmployees(String username) {
@@ -83,6 +89,14 @@ public class EmployeesService {
             log.info("EmployeesService::addEmployee successfully saved employee for user '{}'",
                      user.getUsername());
 
+            ActivityLogs activityLogs = new ActivityLogs();
+            activityLogs.setFromUser(user.getUsername());
+            activityLogs.setAction("add new employee %s %s".formatted(employee.getFirstName(), employee.getLastName()));
+            activityLogs.setDateAction(LocalDate.now());
+            activityLogs.setTimeAction(LocalTime.now());
+
+            activityLogsService.save(activityLogs);
+
             return employeeRepository.save(employee);
 
 
@@ -122,6 +136,21 @@ public class EmployeesService {
     @Transactional
     public void deleteEmployee(String id, String username) {
         log.info("EmployeesService::deleteEmployee invoked by user '{}' for personalId '{}'", username, id);
+        Optional<Employees> employee = employeeRepository.findByPersonalId(id);
+
+        if (employee.isEmpty()) {
+            throw new EmployeesNotFoundException("Employee not found or unauthorized to delete.");
+        }
+
+        ActivityLogs activityLogs = new ActivityLogs();
+        activityLogs.setFromUser(username);
+        activityLogs.setAction("delete employee %s %s".formatted(
+                employee.get().getFirstName(),
+                employee.get().getLastName()
+        ));
+        activityLogs.setDateAction(LocalDate.now());
+        activityLogs.setTimeAction(LocalTime.now());
+        activityLogsService.save(activityLogs);
 
         int deletedCount = employeeRepository.deleteByPersonalIdAndOwner(id, username);
 

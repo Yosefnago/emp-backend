@@ -3,7 +3,9 @@ package com.ms.sw.controller;
 import com.dev.tools.Markers.ApiMarker;
 import com.ms.sw.Dto.employee.*;
 import com.ms.sw.customUtils.CurrentUser;
+import com.ms.sw.entity.ActivityLogs;
 import com.ms.sw.entity.User;
+import com.ms.sw.service.ActivityLogsService;
 import com.ms.sw.service.EmployeesService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -11,6 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Map;
 
@@ -22,12 +27,10 @@ import java.util.Map;
 @ApiMarker
 public class EmployeeController {
 
-
     private final EmployeesService employeesService;
 
     @Autowired
     public EmployeeController(EmployeesService employeesService) {
-
         this.employeesService = employeesService;
     }
 

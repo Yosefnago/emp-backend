@@ -57,11 +57,6 @@ public class Employees {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
-
-    @OneToMany(mappedBy = "employee", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonIgnore
-    private List<Salary> salaries;
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_username", referencedColumnName = "username")
     @JsonIgnore
