@@ -17,7 +17,7 @@ public class DashboardService {
 
         DashboardStatsResponse response = new DashboardStatsResponse(
                 employeeRepository.countEmployeesByUsername(username),
-                3,
+                employeeRepository.countEmployeeByStatus(username),
                 4
 
         );

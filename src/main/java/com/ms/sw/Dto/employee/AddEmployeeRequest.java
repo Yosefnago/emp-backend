@@ -12,11 +12,10 @@ public record AddEmployeeRequest(
         @NotBlank String lastName,
         @NotBlank String personalId,
         @Email String email,
+        @NotBlank String phoneNumber,
+        @NotBlank String address,
         @NotBlank String position,
         @NotBlank String department,
-        @NotBlank Date hireDate,
-        @NotBlank String status,
-        @NotBlank Timestamp createdAt,
-        @NotBlank Timestamp updatedAt
-
+        @NotBlank Timestamp hireDate,
+        @NotBlank String status
 ) {}

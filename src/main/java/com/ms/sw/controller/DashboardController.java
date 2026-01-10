@@ -38,7 +38,6 @@ public class DashboardController {
     public ResponseEntity<List<ActivityLogsDto>> getLastActivity(@CurrentUser User user){
 
         log.info("Get Activity Logs invoked by user '{}'", user.getUsername());
-        System.out.println(activityLogsService.getLastActivity(user.getUsername()));
         return ResponseEntity.ok(activityLogsService.getLastActivity(user.getUsername()));
     }
 

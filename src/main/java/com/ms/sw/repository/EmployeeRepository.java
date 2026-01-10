@@ -69,4 +69,12 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
             @Param("department") String department,
             @Param("status") String status
     );
+
+    @Query("""
+    select count(e)
+        from Employees e
+        where e.status = 'present'
+        and e.user.username = :username
+    """)
+    int countEmployeeByStatus(@Param("username") String username);
 }

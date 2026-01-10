@@ -17,7 +17,9 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
@@ -78,14 +80,18 @@ public class EmployeesService {
             employee.setLastName(addEmployeeRequest.lastName());
             employee.setPersonalId(addEmployeeRequest.personalId());
             employee.setEmail(addEmployeeRequest.email());
+            employee.setPhone(addEmployeeRequest.phoneNumber());
+            employee.setAddress(addEmployeeRequest.address());
             employee.setPosition(addEmployeeRequest.position());
             employee.setDepartment(addEmployeeRequest.department());
-            employee.setHireDate(addEmployeeRequest.hireDate());
+            employee.setHireDate(Timestamp.valueOf(LocalDateTime.now()));
             employee.setStatus(addEmployeeRequest.status());
-            employee.setCreatedAt(addEmployeeRequest.createdAt());
-            employee.setUpdatedAt(addEmployeeRequest.updatedAt());
+            employee.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
+            employee.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
             employee.setUser(user);
 
+            System.out.println(employee.getPhone());
+            System.out.println(addEmployeeRequest.phoneNumber());
             log.info("EmployeesService::addEmployee successfully saved employee for user '{}'",
                      user.getUsername());
 
