@@ -3,7 +3,6 @@ package com.ms.sw.Dto.employee;
 
 import com.dev.tools.Markers.DtoMarker;
 import java.sql.Timestamp;
-import java.util.Date;
 
 /**
  * {@code EmployeeDetailsResponse} is an immutable Data Transfer Object (DTO)
@@ -21,12 +20,17 @@ public record EmployeeDetailsResponse(
         String lastName,
         String personalId,
         String email,
+        String gender,
+        Timestamp birthDate,
+        String familyStatus,
         String phone,
         String position,
         String department,
         String address,
-        Date hireDate,
+        String city,
+        String country,
+        Timestamp hireDate,
+        String jobType,
         String status,
-        Timestamp createdAt,
         Timestamp updatedAt
 ) {}

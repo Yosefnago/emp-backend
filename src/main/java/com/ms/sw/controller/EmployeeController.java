@@ -44,7 +44,7 @@ public class EmployeeController {
 
 
     @GetMapping("/{personalId}")
-    public ResponseEntity<EmployeeDetailsResponse> getEmployeeById(@CurrentUser User user, @PathVariable("personalId") String personalId) {
+    public ResponseEntity<EmployeeDetailsResponse> getEmployeeById(@CurrentUser User user, @PathVariable String personalId) {
 
         log.info("EmployeesController::getEmployeeById invoked by user '{}' for personalId '{}'", user.getUsername(), personalId);
 
@@ -62,12 +62,15 @@ public class EmployeeController {
         return ResponseEntity.ok(new AddEmployeeResponse("Employee added successfully"));
     }
 
-    @PutMapping("/updateEmployeeDetails")
-    public ResponseEntity<UpdateEmployeeDetailsResponse> updateEmployeeDetails(@CurrentUser User user, @RequestBody @Valid UpdateEmployeeDetailsRequest updateEmployeeDetailsRequest){
+    @PutMapping("/updateEmployeeDetails/{personalId}")
+    public ResponseEntity<UpdateEmployeeDetailsResponse> updateEmployeeDetails(
+            @CurrentUser User user,
+            @RequestBody @Valid UpdateEmployeeDetailsRequest updateEmployeeDetailsRequest,
+            @PathVariable String personalId) {
 
         log.info("EmployeesController::updateEmployeeDetails invoked by user '{}'", user.getUsername());
 
-        employeesService.updateEmployeeDetails(updateEmployeeDetailsRequest,user.getUsername());
+        employeesService.updateEmployeeDetails(updateEmployeeDetailsRequest,user.getUsername(),personalId);
         return ResponseEntity.ok(new UpdateEmployeeDetailsResponse("Employee details updated"));
     }
 

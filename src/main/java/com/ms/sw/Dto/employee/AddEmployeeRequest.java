@@ -14,6 +14,8 @@ public record AddEmployeeRequest(
         @Email String email,
         @NotBlank String phoneNumber,
         @NotBlank String address,
+        @NotBlank String city,
+        @NotBlank String country,
         @NotBlank String position,
         @NotBlank String department,
         @NotBlank Timestamp hireDate,

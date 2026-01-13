@@ -30,6 +30,15 @@ public class Employees {
     @Column(name = "personal_id",unique = true)
     private String personalId;
 
+    @Column(name = "gender")
+    private String gender;
+
+    @Column(name = "birth_date")
+    private Timestamp birthDate;
+
+    @Column(name = "family_status")
+    private String familyStatus;
+
     @Column(name = "email")
     private String email;
 
@@ -39,6 +48,12 @@ public class Employees {
     @Column(name = "address")
     private String address;
 
+    @Column(name = "city")
+    private String city;
+
+    @Column(name = "country")
+    private String country;
+
     @Column(name = "position")
     private String position;
 
@@ -46,13 +61,13 @@ public class Employees {
     private String department;
 
     @Column(name = "hire_date")
-    private Date hireDate;
+    private Timestamp hireDate;
+
+    @Column(name = "job_type")
+    private String jobType;
 
     @Column(name = "status")
     private String status;
-
-    @Column(name = "created_at")
-    private Timestamp createdAt;
 
     @Column(name = "updated_at")
     private Timestamp updatedAt;

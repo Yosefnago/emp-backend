@@ -5,6 +5,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -54,8 +57,17 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
         e.firstName = :firstName, 
         e.lastName = :lastName, 
         e.email = :email, 
+        e.gender = :gender,
+        e.birthDate = :birthDate,
+        e.familyStatus = :familyStatus,
+        e.phone = :phone,
+        e.address = :address,
+        e.city = :city,
+        e.country = :country,
         e.position = :position,
         e.department = :department,
+        e.hireDate = :hireDate,
+        e.jobType = :jobType,
         e.status = :status
     WHERE e.personalId = :personalId AND e.user.username = :username
 """)
@@ -65,8 +77,17 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
             @Param("firstName") String firstName,
             @Param("lastName") String lastName,
             @Param("email") String email,
+            @Param("gender")  String gender,
+            @Param("birthDate")  Timestamp birthDate,
+            @Param("familyStatus")   String familyStatus,
+            @Param("phone") String  phone,
+            @Param("address")  String  address,
+            @Param("city") String  city,
+            @Param("country")  String  country,
             @Param("position") String position,
             @Param("department") String department,
+            @Param("hireDate") Timestamp hireDate,
+            @Param("jobType") String  jobType,
             @Param("status") String status
     );
 

@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -82,11 +81,12 @@ public class EmployeesService {
             employee.setEmail(addEmployeeRequest.email());
             employee.setPhone(addEmployeeRequest.phoneNumber());
             employee.setAddress(addEmployeeRequest.address());
+            employee.setCity(addEmployeeRequest.city());
+            employee.setCountry(addEmployeeRequest.country());
             employee.setPosition(addEmployeeRequest.position());
             employee.setDepartment(addEmployeeRequest.department());
-            employee.setHireDate(Timestamp.valueOf(LocalDateTime.now()));
+            employee.setHireDate(addEmployeeRequest.hireDate());
             employee.setStatus(addEmployeeRequest.status());
-            employee.setCreatedAt(Timestamp.valueOf(LocalDateTime.now()));
             employee.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
             employee.setUser(user);
 
@@ -95,13 +95,7 @@ public class EmployeesService {
             log.info("EmployeesService::addEmployee successfully saved employee for user '{}'",
                      user.getUsername());
 
-            ActivityLogs activityLogs = new ActivityLogs();
-            activityLogs.setFromUser(user.getUsername());
-            activityLogs.setAction("add new employee %s %s".formatted(employee.getFirstName(), employee.getLastName()));
-            activityLogs.setDateAction(LocalDate.now());
-            activityLogs.setTimeAction(LocalTime.now());
-
-            activityLogsService.save(activityLogs);
+            activityLogsService.logAction("employee %s %s".formatted(employee.getFirstName(), employee.getLastName()), user.getUsername());
 
             return employeeRepository.save(employee);
 
@@ -123,19 +117,23 @@ public class EmployeesService {
         return mapToEmployeeDetailsResponse(employee);
     }
     private EmployeeDetailsResponse mapToEmployeeDetailsResponse(Employees entity) {
-
         return new EmployeeDetailsResponse(
                 entity.getFirstName(),
                 entity.getLastName(),
                 entity.getPersonalId(),
                 entity.getEmail(),
+                entity.getGender(),
+                entity.getBirthDate(),
+                entity.getFamilyStatus(),
                 entity.getPhone(),
                 entity.getPosition(),
                 entity.getDepartment(),
                 entity.getAddress(),
+                entity.getCity(),
+                entity.getCountry(),
                 entity.getHireDate(),
+                entity.getJobType(),
                 entity.getStatus(),
-                entity.getCreatedAt(),
                 entity.getUpdatedAt()
         );
     }
@@ -148,15 +146,9 @@ public class EmployeesService {
             throw new EmployeesNotFoundException("Employee not found or unauthorized to delete.");
         }
 
-        ActivityLogs activityLogs = new ActivityLogs();
-        activityLogs.setFromUser(username);
-        activityLogs.setAction("delete employee %s %s".formatted(
-                employee.get().getFirstName(),
-                employee.get().getLastName()
-        ));
-        activityLogs.setDateAction(LocalDate.now());
-        activityLogs.setTimeAction(LocalTime.now());
-        activityLogsService.save(activityLogs);
+        activityLogsService.logAction("added new employee %s %s".formatted(
+                employee.get().getFirstName(), employee.get().getLastName()
+        ), username);
 
         int deletedCount = employeeRepository.deleteByPersonalIdAndOwner(id, username);
 
@@ -166,30 +158,43 @@ public class EmployeesService {
     }
 
     @Transactional
-    public void updateEmployeeDetails(UpdateEmployeeDetailsRequest updateEmployeeDetailsRequest, String username) {
+    public void updateEmployeeDetails(UpdateEmployeeDetailsRequest request, String username, String personalId) {
 
         log.info("EmployeesService::updateEmployeeDetails invoked by user '{}' for personalId '{}'",
-                username, updateEmployeeDetailsRequest.personal_id());
+                username, personalId);
 
         int updatedCount = employeeRepository.updateEmployeeDetailsByPersonalIdAndOwner(
-                updateEmployeeDetailsRequest.personal_id(),
+                personalId,
                 username,
-                updateEmployeeDetailsRequest.firstName(),
-                updateEmployeeDetailsRequest.lastName(),
-                updateEmployeeDetailsRequest.email(),
-                updateEmployeeDetailsRequest.position(),
-                updateEmployeeDetailsRequest.department(),
-                updateEmployeeDetailsRequest.status()
+                request.firstName(),
+                request.lastName(),
+                request.email(),
+                request.gender(),
+                request.birthDate(),
+                request.familyStatus(),
+                request.phone(),
+                request.address(),
+                request.city(),
+                request.country(),
+                request.position(),
+                request.department(),
+                request.hireDate(),
+                request.jobType(),
+                request.status()
         );
+        activityLogsService.logAction("update employee %s %s".formatted(
+                request.firstName(),request.lastName()
+        ), username);
+
 
         if (updatedCount == 0) {
             log.warn("EmployeesService::updateEmployeeDetails failed: Employee not found or unauthorized for user '{}', ID '{}'",
-                    username, updateEmployeeDetailsRequest.personal_id());
+                    username, personalId);
             throw new EmployeesNotFoundException("Employee not found or unauthorized to update.");
         }
 
         log.info("EmployeesService::updateEmployeeDetails successfully updated personalId '{}' for user '{}'",
-                updateEmployeeDetailsRequest.personal_id(), username);
+                personalId, username);
 
     }
 }
