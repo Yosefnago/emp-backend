@@ -1,10 +1,10 @@
 package com.ms.sw.views.controller;
 
-import com.ms.sw.views.dto.ActivityLogsDto;
+import com.ms.sw.user.dto.ActivityLogsDto;
 import com.ms.sw.views.dto.DashboardStatsResponse;
 import com.ms.sw.config.customUtils.CurrentUser;
 import com.ms.sw.user.model.User;
-import com.ms.sw.views.service.ActivityLogsService;
+import com.ms.sw.user.service.ActivityLogsService;
 import com.ms.sw.views.service.DashboardService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;

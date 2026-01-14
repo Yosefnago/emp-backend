@@ -35,31 +35,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         String jwt = null;
 
-        // 1. Attempt to extract token from the standard Authorization header (REST)
         final String authHeader = request.getHeader("Authorization");
-
-        // The log shows this is null for the WS handshake
-        log.info("authHeader: {}", authHeader);
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             jwt = authHeader.substring(7);
-            log.debug("Extracted JWT from Header.");
         }
 
-
-
-        // 2. 💡 CRITICAL FIX: If token is null AND this is the WS path, check query parameter
         if (jwt == null && request.getRequestURI().equals("/server-status")) {
             jwt = request.getParameter("token");
-
-            if (jwt != null) {
-                log.debug("Extracted JWT from Query Parameter for WS.");
-            }
         }
 
-        // 3. If token is STILL null after checking both header and query param, proceed without authentication
         if (jwt == null) {
-            log.debug("No JWT found in header or query param. Proceeding unauthenticated.");
             filterChain.doFilter(request, response);
             return;
         }
@@ -92,7 +78,6 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
-        log.info("Successfully authenticated user: {}", username);
         filterChain.doFilter(request, response);
     }
 }

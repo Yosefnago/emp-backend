@@ -3,6 +3,7 @@ package com.ms.sw.employee.controller;
 import com.dev.tools.Markers.ApiMarker;
 import com.ms.sw.config.customUtils.CurrentUser;
 import com.ms.sw.employee.dto.*;
+import com.ms.sw.employee.service.ArchivedEmployeeService;
 import com.ms.sw.user.model.User;
 import com.ms.sw.employee.service.EmployeesService;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -24,10 +25,11 @@ import java.util.Map;
 public class EmployeeController {
 
     private final EmployeesService employeesService;
-
+    private final ArchivedEmployeeService  archivedEmployeeService;
     @Autowired
-    public EmployeeController(EmployeesService employeesService) {
+    public EmployeeController(EmployeesService employeesService, ArchivedEmployeeService archivedEmployeeService) {
         this.employeesService = employeesService;
+        this.archivedEmployeeService = archivedEmployeeService;
     }
 
     @GetMapping("/loadAll")
@@ -70,12 +72,12 @@ public class EmployeeController {
         return ResponseEntity.ok(new UpdateEmployeeDetailsResponse("Employee details updated"));
     }
 
-    @DeleteMapping("/delete/{id}")
+    @PostMapping("/delete/{id}")
     public ResponseEntity<Void> deleteEmployee(@CurrentUser User user, @PathVariable String id) {
 
-        log.info("EmployeesController::deleteEmployee invoked by user '{}' for personalId '{}'", user.getUsername(), id);
+        log.info("EmployeesController::archiveEmployee invoked by user '{}' for personalId '{}'", user.getUsername(), id);
 
-        employeesService.deleteEmployee(id, user.getUsername());
+        archivedEmployeeService.archiveEmployee(id, user.getUsername());
         return ResponseEntity.ok().build();
     }
 

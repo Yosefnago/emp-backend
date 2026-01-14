@@ -1,4 +1,4 @@
-package com.ms.sw.views.model;
+package com.ms.sw.user.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -22,8 +22,12 @@ public class ActivityLogs {
     @Column(name = "from_user")
     private String fromUser;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "action")
-    private String action;
+    private ActionType action;
+
+    @Column(name = "affectedEmployee ")
+    private String affectedEmployee;
 
     @Column(name = "date_action")
     private LocalDate dateAction;

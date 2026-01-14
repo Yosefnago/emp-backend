@@ -25,7 +25,6 @@ import java.util.Optional;
  * @see org.springframework.security.crypto.password.PasswordEncoder
  */
 @Service
-@Slf4j
 public class UserService {
 
     private final UserRepository userRepository;
@@ -69,17 +68,14 @@ public class UserService {
      * @throws InvalidCredentialsException if the provided password does not match the stored hash.
      */
     public Optional<User> login(String username,String password) {
-        log.info("UserService: login {}", username);
 
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found"));
 
         if (!passwordEncoder.matches(password, user.getPassword())) {
-            log.warn("UserService: login failed (password mismatch) for user {}", username);
             throw new InvalidCredentialsException("Invalid credentials");
         }
 
-        log.info("UserService: login success for user {}", username);
         return Optional.of(user);
     }
 
@@ -95,14 +91,11 @@ public class UserService {
      * @throws EmailAlreadyExistsException if the provided email address is already associated with an account.
      */
     public User register(UserRegisterRequest userRegisterRequest) {
-        log.info("UserService: register {}", userRegisterRequest.username());
 
         if (userRepository.existsByUsername(userRegisterRequest.username())) {
-            log.debug("UserService: register failed: username conflict {}", userRegisterRequest.username());
             throw new UserAlreadyExistsException("Username already exists");
         }
         if (userRepository.existsByEmail(userRegisterRequest.email())) {
-            log.debug("UserService: register failed: email conflict {}", userRegisterRequest.email());
             throw new EmailAlreadyExistsException("Email already exists");
         }
         User user = new User();
@@ -110,7 +103,6 @@ public class UserService {
         user.setPassword(passwordEncoder.encode(userRegisterRequest.password()));
         user.setEmail(userRegisterRequest.email());
 
-        log.info("UserService: register user success{}", userRegisterRequest.username());
         return userRepository.save(user);
     }
 
