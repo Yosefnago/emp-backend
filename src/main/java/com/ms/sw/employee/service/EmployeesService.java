@@ -1,25 +1,23 @@
-package com.ms.sw.service;
+package com.ms.sw.employee.service;
 
-import com.ms.sw.Dto.employee.AddEmployeeRequest;
-import com.ms.sw.Dto.employee.EmployeeDetailsResponse;
-import com.ms.sw.Dto.employee.EmployeeListResponse;
-import com.ms.sw.Dto.employee.UpdateEmployeeDetailsRequest;
-import com.ms.sw.entity.ActivityLogs;
-import com.ms.sw.entity.Employees;
-import com.ms.sw.entity.User;
+import com.ms.sw.employee.dto.AddEmployeeRequest;
+import com.ms.sw.employee.dto.EmployeeDetailsResponse;
+import com.ms.sw.employee.dto.EmployeeListResponse;
+import com.ms.sw.employee.dto.UpdateEmployeeDetailsRequest;
+import com.ms.sw.employee.model.Employees;
+import com.ms.sw.user.model.User;
 import com.ms.sw.exception.employees.AddEmployeeException;
 import com.ms.sw.exception.employees.EmployeesNotFoundException;
-import com.ms.sw.repository.EmployeeRepository;
-import com.ms.sw.repository.UserRepository;
+import com.ms.sw.employee.repo.EmployeeRepository;
+import com.ms.sw.user.repo.UserRepository;
+import com.ms.sw.views.service.ActivityLogsService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 

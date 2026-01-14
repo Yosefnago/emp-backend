@@ -1,7 +1,7 @@
-package com.ms.sw.repository;
+package com.ms.sw.views.repo;
 
-import com.ms.sw.Dto.ActivityLogsDto;
-import com.ms.sw.entity.ActivityLogs;
+import com.ms.sw.views.dto.ActivityLogsDto;
+import com.ms.sw.views.model.ActivityLogs;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;

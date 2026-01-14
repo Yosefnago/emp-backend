@@ -1,6 +1,6 @@
-package com.ms.sw.repository;
+package com.ms.sw.user.repo;
 
-import com.ms.sw.entity.User;
+import com.ms.sw.user.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.Optional;

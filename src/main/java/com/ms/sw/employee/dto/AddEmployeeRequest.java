@@ -1,10 +1,9 @@
-package com.ms.sw.Dto.employee;
+package com.ms.sw.employee.dto;
 
 import com.dev.tools.Markers.DtoMarker;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import java.sql.Timestamp;
-import java.util.Date;
 
 @DtoMarker
 public record AddEmployeeRequest(

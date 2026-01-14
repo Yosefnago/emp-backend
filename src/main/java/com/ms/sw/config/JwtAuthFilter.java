@@ -1,8 +1,8 @@
 package com.ms.sw.config;
 
-import com.ms.sw.entity.User;
-import com.ms.sw.service.JwtService;
-import com.ms.sw.service.UserService;
+import com.ms.sw.user.model.User;
+import com.ms.sw.config.service.JwtService;
+import com.ms.sw.user.service.UserService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

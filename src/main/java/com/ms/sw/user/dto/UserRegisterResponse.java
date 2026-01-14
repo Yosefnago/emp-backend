@@ -1,4 +1,4 @@
-package com.ms.sw.Dto.user;
+package com.ms.sw.user.dto;
 
 
 import com.dev.tools.Markers.DtoMarker;

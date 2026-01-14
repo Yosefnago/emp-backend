@@ -1,11 +1,11 @@
-package com.ms.sw.service;
+package com.ms.sw.user.service;
 
-import com.ms.sw.Dto.user.UserRegisterRequest;
-import com.ms.sw.entity.User;
+import com.ms.sw.user.dto.UserRegisterRequest;
+import com.ms.sw.user.model.User;
 import com.ms.sw.exception.auth.EmailAlreadyExistsException;
 import com.ms.sw.exception.auth.InvalidCredentialsException;
 import com.ms.sw.exception.auth.UserAlreadyExistsException;
-import com.ms.sw.repository.UserRepository;
+import com.ms.sw.user.repo.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -21,7 +21,7 @@ import java.util.Optional;
  * like {@link PasswordEncoder} to handle user registration, login verification,
  * and user data retrieval. It ensures security best practices, such as hashing passwords,
  * and handles application-specific exceptions for authentication failures.
- * @see com.ms.sw.repository.UserRepository
+ * @see UserRepository
  * @see org.springframework.security.crypto.password.PasswordEncoder
  */
 @Service

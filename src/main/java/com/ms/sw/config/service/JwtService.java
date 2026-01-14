@@ -1,4 +1,4 @@
-package com.ms.sw.service;
+package com.ms.sw.config.service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

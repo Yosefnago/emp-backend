@@ -1,4 +1,4 @@
-package com.ms.sw.entity;
+package com.ms.sw.attendance.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

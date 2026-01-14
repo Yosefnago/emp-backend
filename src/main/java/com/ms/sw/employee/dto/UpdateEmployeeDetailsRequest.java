@@ -1,4 +1,4 @@
-package com.ms.sw.Dto.employee;
+package com.ms.sw.employee.dto;
 
 import com.dev.tools.Markers.DtoMarker;
 import jakarta.validation.constraints.Email;

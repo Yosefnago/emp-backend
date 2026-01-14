@@ -1,7 +1,10 @@
-package com.ms.sw.Dto.employee;
+package com.ms.sw.employee.dto;
 
 
 import com.dev.tools.Markers.DtoMarker;
+import com.ms.sw.employee.controller.EmployeeController;
+import com.ms.sw.employee.model.Employees;
+import com.ms.sw.user.model.User;
 
 /**
  * {@code EmployeeListResponse} is an immutable Data Transfer Object (DTO)
@@ -12,8 +15,8 @@ import com.dev.tools.Markers.DtoMarker;
  * data payload to improve client-side loading and overall API performance.
  * <p>The fields included provide essential information required for a tabular or list view
  * (e.g., name, contact, department, and current status).
- * @see com.ms.sw.entity.Employees
- * @see com.ms.sw.controller.EmployeeController#getAllEmployees(com.ms.sw.entity.User)
+ * @see Employees
+ * @see EmployeeController#getAllEmployees(User)
  */
 @DtoMarker
 public record EmployeeListResponse(

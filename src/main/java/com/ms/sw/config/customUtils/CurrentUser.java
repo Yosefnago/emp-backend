@@ -1,4 +1,4 @@
-package com.ms.sw.customUtils;
+package com.ms.sw.config.customUtils;
 
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 

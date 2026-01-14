@@ -1,6 +1,4 @@
-package com.ms.sw.Dto;
-
-import java.math.BigDecimal;
+package com.ms.sw.views.dto;
 
 public record DashboardStatsResponse(
         int numberOfEmployees,

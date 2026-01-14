@@ -1,9 +1,8 @@
-package com.ms.sw.service;
+package com.ms.sw.views.service;
 
-import com.ms.sw.Dto.ActivityLogsDto;
-import com.ms.sw.customUtils.CurrentUser;
-import com.ms.sw.entity.ActivityLogs;
-import com.ms.sw.repository.ActivityLogsRepository;
+import com.ms.sw.views.dto.ActivityLogsDto;
+import com.ms.sw.views.model.ActivityLogs;
+import com.ms.sw.views.repo.ActivityLogsRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 

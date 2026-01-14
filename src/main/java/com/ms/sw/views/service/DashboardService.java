@@ -1,7 +1,7 @@
-package com.ms.sw.service;
+package com.ms.sw.views.service;
 
-import com.ms.sw.Dto.DashboardStatsResponse;
-import com.ms.sw.repository.EmployeeRepository;
+import com.ms.sw.views.dto.DashboardStatsResponse;
+import com.ms.sw.employee.repo.EmployeeRepository;
 import org.springframework.stereotype.Service;
 
 @Service

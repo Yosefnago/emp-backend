@@ -1,14 +1,13 @@
-package com.ms.sw.entity;
+package com.ms.sw.employee.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ms.sw.user.model.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
-import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "employees")

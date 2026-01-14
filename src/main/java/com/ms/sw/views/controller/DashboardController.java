@@ -1,11 +1,11 @@
-package com.ms.sw.controller;
+package com.ms.sw.views.controller;
 
-import com.ms.sw.Dto.ActivityLogsDto;
-import com.ms.sw.Dto.DashboardStatsResponse;
-import com.ms.sw.customUtils.CurrentUser;
-import com.ms.sw.entity.User;
-import com.ms.sw.service.ActivityLogsService;
-import com.ms.sw.service.DashboardService;
+import com.ms.sw.views.dto.ActivityLogsDto;
+import com.ms.sw.views.dto.DashboardStatsResponse;
+import com.ms.sw.config.customUtils.CurrentUser;
+import com.ms.sw.user.model.User;
+import com.ms.sw.views.service.ActivityLogsService;
+import com.ms.sw.views.service.DashboardService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;

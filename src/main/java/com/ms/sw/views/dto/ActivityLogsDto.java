@@ -1,4 +1,4 @@
-package com.ms.sw.Dto;
+package com.ms.sw.views.dto;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
