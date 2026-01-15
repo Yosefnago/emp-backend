@@ -32,7 +32,7 @@ public class EmployeeController {
         this.archivedEmployeeService = archivedEmployeeService;
     }
 
-    @GetMapping("/loadAll")
+    @GetMapping()
     public ResponseEntity<List<EmployeeListResponse>> getAllEmployees(@CurrentUser User user) {
 
         log.info("EmployeesController::getAllEmployees invoked by user '{}'", user.getUsername());
@@ -51,7 +51,7 @@ public class EmployeeController {
         return ResponseEntity.ok(fullDetails);
     }
 
-    @PostMapping("/addEmployee")
+    @PostMapping("/add")
     public ResponseEntity<AddEmployeeResponse> addEmployee(@CurrentUser User user, @RequestBody @Valid AddEmployeeRequest addEmployeeRequest) {
 
         log.info("EmployeesController::addEmployee invoked by user '{}'", user.getUsername());
@@ -60,7 +60,7 @@ public class EmployeeController {
         return ResponseEntity.ok(new AddEmployeeResponse("Employee added successfully"));
     }
 
-    @PutMapping("/updateEmployeeDetails/{personalId}")
+    @PutMapping("/{personalId}")
     public ResponseEntity<UpdateEmployeeDetailsResponse> updateEmployeeDetails(
             @CurrentUser User user,
             @RequestBody @Valid UpdateEmployeeDetailsRequest updateEmployeeDetailsRequest,
@@ -72,7 +72,7 @@ public class EmployeeController {
         return ResponseEntity.ok(new UpdateEmployeeDetailsResponse("Employee details updated"));
     }
 
-    @PostMapping("/delete/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEmployee(@CurrentUser User user, @PathVariable String id) {
 
         log.info("EmployeesController::archiveEmployee invoked by user '{}' for personalId '{}'", user.getUsername(), id);

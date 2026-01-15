@@ -26,7 +26,7 @@ public class ActivityLogs {
     @Column(name = "action")
     private ActionType action;
 
-    @Column(name = "affectedEmployee ")
+    @Column(name = "affectedEmployee")
     private String affectedEmployee;
 
     @Column(name = "date_action")
