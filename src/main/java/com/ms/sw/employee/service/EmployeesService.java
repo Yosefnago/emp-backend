@@ -60,7 +60,7 @@ public class EmployeesService {
                 entity.getEmail(),
                 entity.getPhone(),
                 entity.getDepartment(),
-                entity.getStatus()
+                entity.getStatusAttendance()
         );
     }
     @Transactional
@@ -120,6 +120,7 @@ public class EmployeesService {
                 entity.getHireDate(),
                 entity.getJobType(),
                 entity.getStatus(),
+                entity.getStatusAttendance(),
                 entity.getUpdatedAt()
         );
     }

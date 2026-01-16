@@ -36,5 +36,6 @@ public record EmployeeDetailsResponse(
         Timestamp hireDate,
         String jobType,
         String status,
+        String statusAttendance,
         Timestamp updatedAt
 ) {}

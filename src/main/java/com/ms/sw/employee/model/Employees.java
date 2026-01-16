@@ -71,6 +71,9 @@ public class Employees {
     @Column(name = "updated_at")
     private Timestamp updatedAt;
 
+    @Column(name = "status_attendance")
+    private String statusAttendance;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_username", referencedColumnName = "username")
     @JsonIgnore
