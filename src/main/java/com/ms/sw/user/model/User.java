@@ -1,5 +1,6 @@
 package com.ms.sw.user.model;
 
+import com.ms.sw.notifications.model.Notifications;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,16 +13,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public  class User  {
-    public User(String username, String email, String password, String role, boolean enabled, Timestamp lastLogin, Timestamp createdAt, Timestamp updatedAt) {
-        this.username = username;
-        this.email = email;
-        this.password = password;
-        this.role = role;
-        this.enabled = enabled;
-        this.lastLogin = lastLogin;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -55,4 +46,9 @@ public  class User  {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private List<Events> events;
+
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<Notifications> notifications;
 }

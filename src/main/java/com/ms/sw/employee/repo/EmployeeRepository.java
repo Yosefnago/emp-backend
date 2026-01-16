@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -97,4 +98,22 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
         and e.user.username = :username
     """)
     int countEmployeeByStatus(@Param("username") String username);
+
+
+    @Query(value = """
+    SELECT * FROM employees
+    WHERE 
+        (EXTRACT(MONTH FROM CAST(birth_date AS DATE)) = EXTRACT(MONTH FROM CAST(:startDate AS DATE))
+         AND EXTRACT(DAY FROM CAST(birth_date AS DATE)) >= EXTRACT(DAY FROM CAST(:startDate AS DATE)))
+    OR
+        (EXTRACT(MONTH FROM CAST(birth_date AS DATE)) = EXTRACT(MONTH FROM CAST(:endDate AS DATE))
+         AND EXTRACT(DAY FROM CAST(birth_date AS DATE)) <= EXTRACT(DAY FROM CAST(:endDate AS DATE)))
+    OR
+        (EXTRACT(MONTH FROM CAST(birth_date AS DATE)) > EXTRACT(MONTH FROM CAST(:startDate AS DATE))
+         AND EXTRACT(MONTH FROM CAST(birth_date AS DATE)) < EXTRACT(MONTH FROM CAST(:endDate AS DATE)))
+""", nativeQuery = true)
+    List<Employees> findUpcomingBirthdays(
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate
+    );
 }

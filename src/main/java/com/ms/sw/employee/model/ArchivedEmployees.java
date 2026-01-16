@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 
 @Table(name = "archived_employees")
 @Entity
@@ -34,7 +35,7 @@ public class ArchivedEmployees {
     private String gender;
 
     @Column(name = "birth_date")
-    private Timestamp birthDate;
+    private LocalDate birthDate;
 
     @Column(name = "family_status")
     private String familyStatus;
@@ -61,7 +62,7 @@ public class ArchivedEmployees {
     private String department;
 
     @Column(name = "hire_date")
-    private Timestamp hireDate;
+    private LocalDate hireDate;
 
     @Column(name = "job_type")
     private String jobType;
@@ -70,10 +71,10 @@ public class ArchivedEmployees {
     private String status;
 
     @Column(name = "updated_at")
-    private Timestamp updatedAt;
+    private LocalDate updatedAt;
 
     @Column(name = "archived_at")
-    private Timestamp archivedAt;
+    private LocalDate archivedAt;
 
     @Column(name = "archived_by")
     private String archivedBy;

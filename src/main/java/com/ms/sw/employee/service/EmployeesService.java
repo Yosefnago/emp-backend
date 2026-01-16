@@ -12,13 +12,11 @@ import com.ms.sw.exception.employees.EmployeesNotFoundException;
 import com.ms.sw.employee.repo.EmployeeRepository;
 import com.ms.sw.user.repo.UserRepository;
 import com.ms.sw.user.service.ActivityLogsService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -81,7 +79,7 @@ public class EmployeesService {
             employee.setDepartment(addEmployeeRequest.department());
             employee.setHireDate(addEmployeeRequest.hireDate());
             employee.setStatus(addEmployeeRequest.status());
-            employee.setUpdatedAt(Timestamp.valueOf(LocalDateTime.now()));
+            employee.setUpdatedAt(LocalDate.now());
             employee.setUser(user);
 
             activityLogsService.logAction(ActionType.ADD,employee.getFirstName().concat(" "+employee.getLastName()),user.getUsername());

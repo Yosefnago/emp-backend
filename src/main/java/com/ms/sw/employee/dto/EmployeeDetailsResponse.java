@@ -5,8 +5,7 @@ import com.dev.tools.Markers.DtoMarker;
 import com.ms.sw.employee.controller.EmployeeController;
 import com.ms.sw.employee.model.Employees;
 import com.ms.sw.employee.service.EmployeesService;
-
-import java.sql.Timestamp;
+import java.time.LocalDate;
 
 /**
  * {@code EmployeeDetailsResponse} is an immutable Data Transfer Object (DTO)
@@ -25,7 +24,7 @@ public record EmployeeDetailsResponse(
         String personalId,
         String email,
         String gender,
-        Timestamp birthDate,
+        LocalDate birthDate,
         String familyStatus,
         String phone,
         String position,
@@ -33,9 +32,9 @@ public record EmployeeDetailsResponse(
         String address,
         String city,
         String country,
-        Timestamp hireDate,
+        LocalDate hireDate,
         String jobType,
         String status,
         String statusAttendance,
-        Timestamp updatedAt
+        LocalDate updatedAt
 ) {}

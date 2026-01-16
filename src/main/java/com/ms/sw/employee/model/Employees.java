@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "employees")
@@ -33,7 +34,7 @@ public class Employees {
     private String gender;
 
     @Column(name = "birth_date")
-    private Timestamp birthDate;
+    private LocalDate birthDate;
 
     @Column(name = "family_status")
     private String familyStatus;
@@ -60,7 +61,7 @@ public class Employees {
     private String department;
 
     @Column(name = "hire_date")
-    private Timestamp hireDate;
+    private LocalDate hireDate;
 
     @Column(name = "job_type")
     private String jobType;
@@ -69,7 +70,7 @@ public class Employees {
     private String status;
 
     @Column(name = "updated_at")
-    private Timestamp updatedAt;
+    private LocalDate updatedAt;
 
     @Column(name = "status_attendance")
     private String statusAttendance;

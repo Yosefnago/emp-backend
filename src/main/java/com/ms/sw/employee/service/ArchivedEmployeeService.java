@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.Optional;
 
 @Service
@@ -64,7 +65,7 @@ public class ArchivedEmployeeService {
             archivedEmployee.setStatus(employee.getStatus());
             archivedEmployee.setUpdatedAt(employee.getUpdatedAt());
 
-            archivedEmployee.setArchivedAt(Timestamp.from(Instant.now()));
+            archivedEmployee.setArchivedAt(LocalDate.now());
             archivedEmployee.setArchivedBy(username);
 
             archivedEmployeeRepository.save(archivedEmployee);
