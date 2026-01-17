@@ -1,5 +1,7 @@
 package com.ms.sw.employee.repo;
 
+import com.ms.sw.employee.dto.EmployeeDetailsResponse;
+import com.ms.sw.employee.dto.EmployeeListResponse;
 import com.ms.sw.employee.model.Employees;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -20,7 +22,7 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
         JOIN e.user u
         WHERE u.username = :username
     """)
-    List<Employees> getAllEmployeesByOwner(@Param("username") String username);
+    List<EmployeeListResponse> getAllEmployeesByOwner(@Param("username") String username);
 
     @Query("""
         SELECT COUNT(e)
@@ -45,8 +47,8 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
         JOIN e.user u
         WHERE e.personalId = :personalId AND u.username = :username
     """)
-    Optional<Employees> findByPersonalIdAndOwner(@Param("personalId") String personalId,
-                                                 @Param("username") String username);
+    Optional<EmployeeDetailsResponse> findByPersonalIdAndOwner(@Param("personalId") String personalId,
+                                                               @Param("username") String username);
 
     Optional<Employees> findByPersonalId(String personalId);
 

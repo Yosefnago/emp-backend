@@ -36,31 +36,15 @@ public class EmployeesService {
     public List<EmployeeListResponse> getAllEmployees(String username) {
 
 
-        List<Employees> employees = employeeRepository.getAllEmployeesByOwner(username);
+        List<EmployeeListResponse> employees = employeeRepository.getAllEmployeesByOwner(username);
 
         if (employees.isEmpty()) {
             return List.of();
         }
-        return employees.stream()
-                .map(EmployeesService::mapToEmployeeListResponse)
-                .toList();
+
+        return employees;
     }
-    /**
-     * Maps the JPA entity to the list response DTO.
-     * @param entity The Employees entity.
-     * @return The EmployeeListResponse DTO.
-     */
-    private static EmployeeListResponse mapToEmployeeListResponse(Employees entity) {
-        return new EmployeeListResponse(
-                entity.getPersonalId(),
-                entity.getFirstName(),
-                entity.getLastName(),
-                entity.getEmail(),
-                entity.getPhone(),
-                entity.getDepartment(),
-                entity.getStatusAttendance()
-        );
-    }
+
     @Transactional
     public Employees addEmployee(AddEmployeeRequest addEmployeeRequest, User user) {
 
@@ -82,9 +66,15 @@ public class EmployeesService {
             employee.setUpdatedAt(LocalDate.now());
             employee.setUser(user);
 
-            activityLogsService.logAction(ActionType.ADD,employee.getFirstName().concat(" "+employee.getLastName()),user.getUsername());
-            return employeeRepository.save(employee);
 
+            Employees savedEmployee = employeeRepository.save(employee);
+
+            activityLogsService.logAction(
+                    ActionType.ADD,
+                    employee.getFirstName().concat(" "+employee.getLastName())
+                    ,user.getUsername());
+
+            return savedEmployee;
 
         } catch (DataIntegrityViolationException e) {
 
@@ -95,32 +85,10 @@ public class EmployeesService {
     public EmployeeDetailsResponse getEmployeeByPersonalId(String personalId, String username) {
 
 
-        Employees employee = employeeRepository.findByPersonalIdAndOwner(personalId, username)
+        EmployeeDetailsResponse employee = employeeRepository.findByPersonalIdAndOwner(personalId, username)
                 .orElseThrow(() -> new EmployeesNotFoundException("Employee not found or unauthorized."));
 
-        return mapToEmployeeDetailsResponse(employee);
-    }
-    private EmployeeDetailsResponse mapToEmployeeDetailsResponse(Employees entity) {
-        return new EmployeeDetailsResponse(
-                entity.getFirstName(),
-                entity.getLastName(),
-                entity.getPersonalId(),
-                entity.getEmail(),
-                entity.getGender(),
-                entity.getBirthDate(),
-                entity.getFamilyStatus(),
-                entity.getPhone(),
-                entity.getPosition(),
-                entity.getDepartment(),
-                entity.getAddress(),
-                entity.getCity(),
-                entity.getCountry(),
-                entity.getHireDate(),
-                entity.getJobType(),
-                entity.getStatus(),
-                entity.getStatusAttendance(),
-                entity.getUpdatedAt()
-        );
+        return employee;
     }
 
     @Transactional

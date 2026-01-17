@@ -1,26 +1,28 @@
 package com.ms.sw.user.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
 @Table(name = "activity_logs")
-@Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class ActivityLogs {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    @EqualsAndHashCode.Include
+    private Long id;
 
     @Column(name = "from_user")
     private String fromUser;
+
 
     @Enumerated(EnumType.STRING)
     @Column(name = "action")

@@ -12,7 +12,7 @@ import java.util.List;
 
 
 @Repository
-public interface ActivityLogsRepository extends JpaRepository<ActivityLogs, String> {
+public interface ActivityLogsRepository extends JpaRepository<ActivityLogs, Long> {
 
 
     @Query("""

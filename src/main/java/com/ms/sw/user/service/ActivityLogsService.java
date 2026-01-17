@@ -5,8 +5,8 @@ import com.ms.sw.user.model.ActionType;
 import com.ms.sw.user.model.ActivityLogs;
 import com.ms.sw.user.repo.ActivityLogsRepository;
 import com.ms.sw.views.dto.ActivityLogsListDto;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Propagation;import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -26,6 +26,8 @@ public class ActivityLogsService {
        return activityLogsRepository.getLastActivityByUsername(username,PageRequest.of(0,3));
 
     }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void logAction(ActionType actionType, String affectedEmployee, String username) {
         try {
 
