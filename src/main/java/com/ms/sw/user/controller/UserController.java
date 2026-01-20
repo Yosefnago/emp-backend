@@ -51,5 +51,10 @@ public class UserController {
         return ResponseEntity.ok(new UserRegisterResponse("Register successful"));
     }
 
+    @PostMapping("/logout")
+    public ResponseEntity<Void> logout() {
+        System.out.println("Logout successful");
+        return ResponseEntity.noContent().build();
+    }
 
 }

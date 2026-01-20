@@ -55,7 +55,7 @@ public class config {
                 "Authorization",
                 "Content-Type"
         ));
-        config.setAllowCredentials(true);
+        config.setAllowCredentials(false);
 
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);

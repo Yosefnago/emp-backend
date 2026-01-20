@@ -37,7 +37,6 @@ public class UserService {
      * @param userRepository The JPA repository for accessing user persistence data.
      * @param passwordEncoder The Spring Security component for encoding and verifying passwords.
      */
-    @Autowired
     public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;

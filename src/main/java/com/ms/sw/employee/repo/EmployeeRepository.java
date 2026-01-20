@@ -80,7 +80,7 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
             @Param("lastName") String lastName,
             @Param("email") String email,
             @Param("gender")  String gender,
-            @Param("birthDate")  Timestamp birthDate,
+            @Param("birthDate")  LocalDate birthDate,
             @Param("familyStatus")   String familyStatus,
             @Param("phone") String  phone,
             @Param("address")  String  address,
@@ -88,7 +88,7 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
             @Param("country")  String  country,
             @Param("position") String position,
             @Param("department") String department,
-            @Param("hireDate") Timestamp hireDate,
+            @Param("hireDate") LocalDate hireDate,
             @Param("jobType") String  jobType,
             @Param("status") String status
     );

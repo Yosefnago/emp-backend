@@ -5,6 +5,7 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 import java.sql.Timestamp;
+import java.time.LocalDate;
 
 
 /**
@@ -23,7 +24,7 @@ public record UpdateEmployeeDetailsRequest(
         @Email String email,
         @NotBlank String personal_id,
         @NotBlank String gender,
-        @NotBlank Timestamp birthDate,
+        @NotBlank LocalDate birthDate,
         @NotBlank String familyStatus,
         @NotBlank String phone,
         @NotBlank String address,
@@ -31,7 +32,7 @@ public record UpdateEmployeeDetailsRequest(
         @NotBlank String country,
         @NotBlank String position,
         @NotBlank String department,
-        @NotBlank Timestamp hireDate,
+        @NotBlank LocalDate hireDate,
         @NotBlank String jobType,
         @NotBlank String status
 ) {}
