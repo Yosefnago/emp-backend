@@ -2,13 +2,13 @@ package com.ms.sw.user.controller;
 
 
 import com.dev.tools.Markers.ApiMarker;
-import com.ms.sw.user.model.User;
-import com.ms.sw.exception.auth.InvalidCredentialsException;
-import com.ms.sw.config.service.JwtService;
 import com.ms.sw.user.dto.UserLoginRequest;
 import com.ms.sw.user.dto.UserLoginResponse;
 import com.ms.sw.user.dto.UserRegisterRequest;
 import com.ms.sw.user.dto.UserRegisterResponse;
+import com.ms.sw.user.model.User;
+import com.ms.sw.exception.auth.InvalidCredentialsException;
+import com.ms.sw.config.service.JwtService;
 import com.ms.sw.user.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
