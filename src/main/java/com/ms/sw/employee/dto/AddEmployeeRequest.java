@@ -3,7 +3,6 @@ package com.ms.sw.employee.dto;
 import com.dev.tools.Markers.DtoMarker;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-import java.sql.Timestamp;
 import java.time.LocalDate;
 
 @DtoMarker

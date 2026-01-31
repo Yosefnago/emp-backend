@@ -7,7 +7,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface NotificationRepository extends JpaRepository<Notifications, Long> {
@@ -31,15 +30,6 @@ public interface NotificationRepository extends JpaRepository<Notifications, Lon
     int countUnreadByUsername(@Param("username") String username);
 
 
-    @Query("""
-        SELECT n FROM Notifications n
-        JOIN n.user u
-        WHERE n.id = :id
-        AND u.username = :username
-    """)
-    Optional<Notifications> findByIdAndUsername(@Param("id") Long id, @Param("username") String username);
-
-
     @Modifying
     @Query("""
         UPDATE Notifications n
@@ -57,7 +47,7 @@ public interface NotificationRepository extends JpaRepository<Notifications, Lon
         WHERE n.user.username = :username
         AND n.isRead = false
     """)
-    int markAllAsReadByUsername(@Param("username") String username);
+    void markAllAsReadByUsername(@Param("username") String username);
 
 
     @Modifying
@@ -74,5 +64,5 @@ public interface NotificationRepository extends JpaRepository<Notifications, Lon
         DELETE FROM Notifications n
         WHERE n.user.username = :username
     """)
-    int deleteAllByUsername(@Param("username") String username);
+    void deleteAllByUsername(@Param("username") String username);
 }

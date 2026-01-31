@@ -15,13 +15,10 @@ public class DashboardService {
     }
     public DashboardStatsResponse loadDashboardData(String username){
 
-        DashboardStatsResponse response = new DashboardStatsResponse(
-                employeeRepository.countEmployeesByUsername(username),
-                employeeRepository.countEmployeeByStatus(username),
-                4
+        int countEmployee = employeeRepository.countEmployeesByUsername(username);
+        int statusCount = employeeRepository.countEmployeeByStatus(username);
 
-        );
-        return response;
+        return new DashboardStatsResponse(countEmployee, statusCount, 4);
     }
 
 }

@@ -26,7 +26,7 @@ public record EmployeeDetailsResponse(
         String gender,
         LocalDate birthDate,
         String familyStatus,
-        String phone,
+        String phoneNumber,
         String position,
         String department,
         String address,

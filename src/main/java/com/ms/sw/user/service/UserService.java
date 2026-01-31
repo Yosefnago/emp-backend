@@ -6,8 +6,6 @@ import com.ms.sw.exception.auth.EmailAlreadyExistsException;
 import com.ms.sw.exception.auth.InvalidCredentialsException;
 import com.ms.sw.exception.auth.UserAlreadyExistsException;
 import com.ms.sw.user.repo.UserRepository;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

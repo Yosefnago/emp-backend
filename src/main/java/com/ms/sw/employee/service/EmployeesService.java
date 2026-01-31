@@ -5,14 +5,12 @@ import com.ms.sw.employee.dto.EmployeeDetailsResponse;
 import com.ms.sw.employee.dto.EmployeeListResponse;
 import com.ms.sw.employee.dto.UpdateEmployeeDetailsRequest;
 import com.ms.sw.employee.model.Employees;
+import com.ms.sw.exception.employees.EmployeeNotFoundException;
 import com.ms.sw.user.model.ActionType;
 import com.ms.sw.user.model.User;
 import com.ms.sw.exception.employees.AddEmployeeException;
-import com.ms.sw.exception.employees.EmployeesNotFoundException;
 import com.ms.sw.employee.repo.EmployeeRepository;
-import com.ms.sw.user.repo.UserRepository;
 import com.ms.sw.user.service.ActivityLogsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,18 +21,14 @@ import java.util.List;
 public class EmployeesService {
 
     private final EmployeeRepository employeeRepository;
-    private final UserRepository userRepository;
     private final ActivityLogsService activityLogsService;
 
-    @Autowired
-    public EmployeesService(EmployeeRepository employeeRepository,UserRepository userRepository,ActivityLogsService activityLogsService) {
-        this.userRepository =  userRepository;
+    public EmployeesService(EmployeeRepository employeeRepository,ActivityLogsService activityLogsService) {
         this.employeeRepository = employeeRepository;
         this.activityLogsService = activityLogsService;
     }
 
     public List<EmployeeListResponse> getAllEmployees(String username) {
-
 
         List<EmployeeListResponse> employees = employeeRepository.getAllEmployeesByOwner(username);
 
@@ -46,7 +40,7 @@ public class EmployeesService {
     }
 
     @Transactional
-    public Employees addEmployee(AddEmployeeRequest addEmployeeRequest, User user) {
+    public void addEmployee(AddEmployeeRequest addEmployeeRequest, User user) {
 
         try {
             Employees employee = new Employees();
@@ -55,7 +49,7 @@ public class EmployeesService {
             employee.setLastName(addEmployeeRequest.lastName());
             employee.setPersonalId(addEmployeeRequest.personalId());
             employee.setEmail(addEmployeeRequest.email());
-            employee.setPhone(addEmployeeRequest.phoneNumber());
+            employee.setPhoneNumber(addEmployeeRequest.phoneNumber());
             employee.setAddress(addEmployeeRequest.address());
             employee.setCity(addEmployeeRequest.city());
             employee.setCountry(addEmployeeRequest.country());
@@ -67,28 +61,23 @@ public class EmployeesService {
             employee.setUser(user);
 
 
-            Employees savedEmployee = employeeRepository.save(employee);
+            employeeRepository.save(employee);
 
             activityLogsService.logAction(
                     ActionType.ADD,
                     employee.getFirstName().concat(" "+employee.getLastName())
                     ,user.getUsername());
 
-            return savedEmployee;
-
         } catch (DataIntegrityViolationException e) {
 
             throw new AddEmployeeException("Error: Employee data violates unique constraints (e.g., ID or Email already exists).");
         }
-
     }
     public EmployeeDetailsResponse getEmployeeByPersonalId(String personalId, String username) {
 
 
-        EmployeeDetailsResponse employee = employeeRepository.findByPersonalIdAndOwner(personalId, username)
-                .orElseThrow(() -> new EmployeesNotFoundException("Employee not found or unauthorized."));
-
-        return employee;
+        return employeeRepository.findByPersonalIdAndOwner(personalId, username)
+                .orElseThrow(() -> new EmployeeNotFoundException("Employee not found or unauthorized."));
     }
 
     @Transactional
@@ -103,7 +92,7 @@ public class EmployeesService {
                 request.gender(),
                 request.birthDate(),
                 request.familyStatus(),
-                request.phone(),
+                request.phoneNumber(),
                 request.address(),
                 request.city(),
                 request.country(),
@@ -117,7 +106,7 @@ public class EmployeesService {
         activityLogsService.logAction(ActionType.UPDATE,request.firstName().concat(" "+request.lastName()),username);
 
         if (updatedCount == 0) {
-            throw new EmployeesNotFoundException("Employee not found or unauthorized to update.");
+            throw new EmployeeNotFoundException("Employee not found or unauthorized to update.");
         }
     }
 }

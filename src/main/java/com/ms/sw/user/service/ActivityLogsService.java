@@ -41,7 +41,7 @@ public class ActivityLogsService {
             activityLogsRepository.save(activityLogs);
 
         } catch (Exception e) {
-            System.out.println(e.getMessage());;
+            System.out.println(e.getMessage());
         }
     }
     public List<ActivityLogsListDto> getAllActivities(String username) {

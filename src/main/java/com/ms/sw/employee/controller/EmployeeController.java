@@ -6,18 +6,14 @@ import com.ms.sw.employee.dto.*;
 import com.ms.sw.employee.service.ArchivedEmployeeService;
 import com.ms.sw.user.model.User;
 import com.ms.sw.employee.service.EmployeesService;
-import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
 
-@Tag(name = "Employees", description = "employee controllers")
-@CrossOrigin(origins = "http://localhost:4200")
 @RestController
 @RequestMapping("/employees")
 @Slf4j
@@ -26,7 +22,7 @@ public class EmployeeController {
 
     private final EmployeesService employeesService;
     private final ArchivedEmployeeService  archivedEmployeeService;
-    @Autowired
+
     public EmployeeController(EmployeesService employeesService, ArchivedEmployeeService archivedEmployeeService) {
         this.employeesService = employeesService;
         this.archivedEmployeeService = archivedEmployeeService;

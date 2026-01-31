@@ -1,5 +1,8 @@
 package com.ms.sw.user.model;
 
+import lombok.Getter;
+
+@Getter
 public enum ActionType {
     ADD("נוסף"),
     DELETE("מחק"),
@@ -11,8 +14,5 @@ public enum ActionType {
 
     ActionType(String hebrewLabel) {
         this.hebrewLabel = hebrewLabel;
-    }
-    public String getHebrewLabel() {
-        return hebrewLabel;
     }
 }

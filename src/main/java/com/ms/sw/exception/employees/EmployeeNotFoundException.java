@@ -1,7 +1,13 @@
 package com.ms.sw.exception.employees;
 
-public class EmployeeNotFoundException extends RuntimeException {
-  public EmployeeNotFoundException(String message) {
-    super(message);
-  }
+import org.springframework.http.HttpStatus;
+
+public class EmployeeNotFoundException extends EmployeeException {
+
+    private static final String ERROR_CODE = "EMP_001";
+    private static final HttpStatus STATUS = HttpStatus.NOT_FOUND;
+
+    public EmployeeNotFoundException(String message) {
+        super(message, STATUS, ERROR_CODE);
+    }
 }

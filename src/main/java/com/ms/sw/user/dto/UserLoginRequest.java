@@ -15,5 +15,4 @@ import jakarta.validation.constraints.NotBlank;
  * @see jakarta.validation.constraints.NotBlank
  */
 @DtoMarker
-public record UserLoginRequest(@NotBlank String username,@NotBlank String password) {
-}
+public record UserLoginRequest(@NotBlank String username,@NotBlank String password) {}

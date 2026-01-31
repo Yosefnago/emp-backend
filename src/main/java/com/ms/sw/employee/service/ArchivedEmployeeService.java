@@ -4,15 +4,11 @@ import com.ms.sw.employee.model.ArchivedEmployees;
 import com.ms.sw.employee.model.Employees;
 import com.ms.sw.employee.repo.ArchivedEmployeeRepository;
 import com.ms.sw.employee.repo.EmployeeRepository;
-import com.ms.sw.exception.employees.EmployeesNotFoundException;
+import com.ms.sw.exception.employees.EmployeeNotFoundException;
 import com.ms.sw.user.model.ActionType;
 import com.ms.sw.user.service.ActivityLogsService;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.util.Optional;
 
@@ -34,13 +30,13 @@ public class ArchivedEmployeeService {
         Optional<Employees> employeeOpt = employeeRepository.findByPersonalId(personalId);
 
         if (employeeOpt.isEmpty()) {
-            throw new EmployeesNotFoundException("Employee not found or unauthorized to archive.");
+            throw new EmployeeNotFoundException("Employee not found or unauthorized to archive.");
         }
 
         Employees employee = employeeOpt.get();
 
         if (!employee.getUser().getUsername().equals(username)) {
-            throw new EmployeesNotFoundException("Employee not found or unauthorized to archive.");
+            throw new EmployeeNotFoundException("Employee not found or unauthorized to archive.");
         }
 
         try {
@@ -54,7 +50,7 @@ public class ArchivedEmployeeService {
             archivedEmployee.setBirthDate(employee.getBirthDate());
             archivedEmployee.setFamilyStatus(employee.getFamilyStatus());
             archivedEmployee.setEmail(employee.getEmail());
-            archivedEmployee.setPhone(employee.getPhone());
+            archivedEmployee.setPhone(employee.getPhoneNumber());
             archivedEmployee.setAddress(employee.getAddress());
             archivedEmployee.setCity(employee.getCity());
             archivedEmployee.setCountry(employee.getCountry());
@@ -75,7 +71,7 @@ public class ArchivedEmployeeService {
             int deletedCount = employeeRepository.deleteByPersonalIdAndOwner(personalId, username);
 
             if (deletedCount == 0) {
-                throw new EmployeesNotFoundException("Failed to delete employee from active table.");
+                throw new EmployeeNotFoundException("Failed to delete employee from active table.");
             }
 
 

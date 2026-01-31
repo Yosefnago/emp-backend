@@ -3,8 +3,6 @@ package com.ms.sw.employee.dto;
 import com.dev.tools.Markers.DtoMarker;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
-
-import java.sql.Timestamp;
 import java.time.LocalDate;
 
 
@@ -26,7 +24,7 @@ public record UpdateEmployeeDetailsRequest(
         @NotBlank String gender,
         @NotBlank LocalDate birthDate,
         @NotBlank String familyStatus,
-        @NotBlank String phone,
+        @NotBlank String phoneNumber,
         @NotBlank String address,
         @NotBlank String city,
         @NotBlank String country,

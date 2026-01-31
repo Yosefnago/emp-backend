@@ -21,7 +21,7 @@ public class NotificationService {
         this.notificationRepository = notificationRepository;
     }
 
-    private Notifications createNotification(User user, String message, NotificationType type) {
+    private void createNotification(User user, String message, NotificationType type) {
         Notifications notification = new Notifications();
         notification.setUser(user);
         notification.setMessage(message);
@@ -29,7 +29,7 @@ public class NotificationService {
         notification.setIsRead(false);
         notification.setCreatedAt(LocalDateTime.now());
 
-        return notificationRepository.save(notification);
+        notificationRepository.save(notification);
     }
 
     public void createEventReminder(User user, String eventTitle, int daysUntil, String eventDate) {

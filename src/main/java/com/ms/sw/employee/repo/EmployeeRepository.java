@@ -7,8 +7,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
@@ -34,19 +32,19 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
 
     @Modifying
     @Query("""
-         DELETE FROM Employees e          
-         WHERE e.personalId = :personalId
-         AND e.user.username = :ownerUsername     
-                  """)
+        DELETE FROM Employees e\s
+        WHERE e.personalId = :personalId\s
+        AND e.user.username = :ownerUsername\s
+       \s""")
     int deleteByPersonalIdAndOwner(@Param("personalId") String personalId, @Param("ownerUsername") String ownerUsername);
 
 
     @Query("""
-        SELECT e 
+        SELECT e\s
         FROM Employees e
         JOIN e.user u
         WHERE e.personalId = :personalId AND u.username = :username
-    """)
+   \s""")
     Optional<EmployeeDetailsResponse> findByPersonalIdAndOwner(@Param("personalId") String personalId,
                                                                @Param("username") String username);
 
@@ -55,14 +53,14 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
 
     @Modifying
     @Query("""
-    UPDATE Employees e SET 
-        e.firstName = :firstName, 
-        e.lastName = :lastName, 
-        e.email = :email, 
+    UPDATE Employees e SET\s
+        e.firstName = :firstName,\s
+        e.lastName = :lastName,\s
+        e.email = :email,\s
         e.gender = :gender,
         e.birthDate = :birthDate,
         e.familyStatus = :familyStatus,
-        e.phone = :phone,
+        e.phoneNumber = :phoneNumber,
         e.address = :address,
         e.city = :city,
         e.country = :country,
@@ -82,7 +80,7 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
             @Param("gender")  String gender,
             @Param("birthDate")  LocalDate birthDate,
             @Param("familyStatus")   String familyStatus,
-            @Param("phone") String  phone,
+            @Param("phoneNumber") String  phoneNumber,
             @Param("address")  String  address,
             @Param("city") String  city,
             @Param("country")  String  country,
@@ -96,7 +94,7 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
     @Query("""
     select count(e)
         from Employees e
-        where e.status = 'present'
+        where e.statusAttendance = 'present'
         and e.user.username = :username
     """)
     int countEmployeeByStatus(@Param("username") String username);
@@ -104,7 +102,7 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
 
     @Query(value = """
     SELECT * FROM employees
-    WHERE 
+    WHERE\s
         (EXTRACT(MONTH FROM CAST(birth_date AS DATE)) = EXTRACT(MONTH FROM CAST(:startDate AS DATE))
          AND EXTRACT(DAY FROM CAST(birth_date AS DATE)) >= EXTRACT(DAY FROM CAST(:startDate AS DATE)))
     OR

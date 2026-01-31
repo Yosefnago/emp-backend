@@ -19,7 +19,7 @@ public class Attendance {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(name = "personal_id",unique = false,nullable = false)
+    @Column(name = "personal_id",unique = true,nullable = false)
     private String personalId;
 
     @Column(name = "date")

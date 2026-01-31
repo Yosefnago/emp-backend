@@ -1,6 +1,5 @@
 package com.ms.sw.user.service;
 
-import com.ms.sw.config.customUtils.CurrentUser;
 import com.ms.sw.user.dto.EventDto;
 import com.ms.sw.user.model.Events;
 import com.ms.sw.user.model.User;
@@ -27,7 +26,7 @@ public class EventsService {
     public List<EventDto> getUpcomingEvents(String username) {
         return eventsRepository.getUpcomingEvents(username);
     }
-    public Events addEvent(User user, EventDto eventDto) {
+    public void addEvent(User user, EventDto eventDto) {
 
         Events newEvent = new Events();
 
@@ -40,6 +39,6 @@ public class EventsService {
         newEvent.setNumberOfAttendance(eventDto.numberOfAttendance());
         newEvent.setUser(user);
 
-        return eventsRepository.save(newEvent);
+        eventsRepository.save(newEvent);
     }
 }
