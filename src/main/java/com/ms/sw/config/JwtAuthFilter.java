@@ -20,7 +20,18 @@ import java.io.IOException;
 import java.util.Optional;
 
 /**
- * JWT Authentication Filter that validates tokens on every request.
+ * JWT Authentication Filter that intercepts HTTP requests and validates JWT tokens.
+ *
+ * <p>This filter runs once per request and performs the following tasks:</p>
+ * <ul>
+ *     <li>Extracts JWT from the Authorization header</li>
+ *     <li>Validates token expiration and integrity</li>
+ *     <li>Authenticates the user in Spring Security context if token is valid</li>
+ *     <li>Handles expired or invalid tokens by returning 401 responses</li>
+ * </ul>
+ *
+ * <p>Delegates user retrieval to {@link UserService} and token validation
+ * to {@link JwtService}.</p>
  */
 @Component
 @Slf4j
@@ -34,6 +45,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         this.jwtService = jwtService;
         this.userService = userService;
     }
+
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request,
@@ -67,10 +79,10 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     /**
-     * Extracts JWT token from the Authorization header.
+     * Extracts the JWT token from the "Authorization" header.
      *
      * @param request HTTP request
-     * @return JWT token string, or null if not present
+     * @return the JWT token string, or {@code null} if not present
      */
     public String extractJwtFromRequest(HttpServletRequest request) {
         final String authHeader = request.getHeader("Authorization");
@@ -84,10 +96,12 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     /**
      * Authenticates the request using the provided JWT token.
      *
+     * <p>If valid, sets the authenticated user in the Spring Security context.</p>
+     *
      * @param token JWT token to validate
      * @param request HTTP request for context
      * @throws JwtExpiredException if token has expired
-     * @throws JwtInvalidException if token is invalid
+     * @throws JwtInvalidException if token is invalid or user not found
      */
     public void authenticateWithToken(String token, HttpServletRequest request) {
 
@@ -113,11 +127,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         log.info("Authentication successful for user: {}", username);
 
     }
+
     /**
-     * Handles expired token scenario by returning 401 with clear error message.
+     * Handles expired JWT tokens by returning a 401 response with error details.
      *
      * @param response HTTP response
      * @param e JwtExpiredException with details
+     * @throws IOException if writing the response fails
      */
     private void handleExpiredToken(HttpServletResponse response, JwtExpiredException e) throws IOException {
 
@@ -133,11 +149,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
         );
         response.getWriter().write(jsonResponse );
     }
+
     /**
-     * Handles invalid token scenario (bad signature, malformed, etc).
+     * Handles invalid JWT tokens (bad signature, malformed, etc.)
+     * by returning a 401 response with error details.
      *
      * @param response HTTP response
      * @param e JwtInvalidException with details
+     * @throws IOException if writing the response fails
      */
     private void handleInvalidToken(HttpServletResponse response, JwtInvalidException e)
             throws IOException {
@@ -153,11 +172,14 @@ public class JwtAuthFilter extends OncePerRequestFilter {
 
         response.getWriter().write(jsonResponse);
     }
+
     /**
-     * Handles unexpected errors during token validation.
+     * Handles unexpected errors during token validation by returning a
+     * generic 401 authentication failed response.
      *
      * @param response HTTP response
      * @param e Exception that occurred
+     * @throws IOException if writing the response fails
      */
     private void handleUnexpectedError(HttpServletResponse response, Exception e)
             throws IOException {

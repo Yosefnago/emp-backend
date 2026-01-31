@@ -15,9 +15,34 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.List;
 
+/**
+ * Spring Security configuration for the application.
+ *
+ * <p>Configures HTTP security, CORS, session management, password encoding,
+ * and JWT authentication filter.</p>
+ *
+ * <p>Responsibilities:</p>
+ * <ul>
+ *     <li>Disable CSRF, HTTP Basic, and form login</li>
+ *     <li>Configure stateless session management</li>
+ *     <li>Allow public access to authentication endpoints, API docs, and server status</li>
+ *     <li>Require authentication for all other requests</li>
+ *     <li>Register JWT authentication filter before UsernamePasswordAuthenticationFilter</li>
+ *     <li>Configure CORS for frontend integration</li>
+ *     <li>Provide a BCrypt password encoder bean</li>
+ * </ul>
+ */
 @Configuration
 public class SecurityConfiguration {
 
+    /**
+     * Configures the security filter chain.
+     *
+     * @param http the HttpSecurity object
+     * @param jwtAuthFilter JWT authentication filter
+     * @return configured SecurityFilterChain
+     * @throws Exception if configuration fails
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter) throws Exception {
         return http
@@ -38,6 +63,11 @@ public class SecurityConfiguration {
                 .build();
     }
 
+    /**
+     * Configures CORS settings for the application.
+     *
+     * @return CorsConfigurationSource with allowed origins, methods, headers, and credentials
+     */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
@@ -51,6 +81,12 @@ public class SecurityConfiguration {
         source.registerCorsConfiguration("/**", config);
         return source;
     }
+
+    /**
+     * Provides a password encoder using BCrypt hashing algorithm.
+     *
+     * @return PasswordEncoder bean
+     */
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();

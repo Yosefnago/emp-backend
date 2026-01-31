@@ -6,6 +6,7 @@ import com.ms.sw.exception.auth.jwt.JwtExpiredException;
 import com.ms.sw.exception.auth.jwt.JwtInvalidException;
 import com.ms.sw.user.dto.UserLoginRequest;
 import com.ms.sw.config.service.JwtService;
+import com.ms.sw.user.service.AuthService;
 import com.ms.sw.user.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,8 +21,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Authentication controller handling login, token refresh, and logout.
- * Implements secure token management with separate access and refresh tokens.
+ * REST controller responsible for authentication-related HTTP endpoints.
+ *
+ * <p>This controller exposes a thin web layer for:</p>
+ * <ul>
+ *   <li>User login</li>
+ *   <li>Access token refresh</li>
+ *   <li>User logout</li>
+ * </ul>
+ *
+ * <p>All authentication business logic is delegated to {@link AuthService}.
+ * The controller is intentionally kept free of domain logic and is responsible
+ * only for HTTP request/response handling.</p>
+ *
+ * <p>Security model:</p>
+ * <ul>
+ *   <li>Access token is returned in the response body</li>
+ *   <li>Refresh token is stored in an HTTP-only cookie</li>
+ * </ul>
  */
 @RestController
 @RequestMapping("auth")
@@ -29,188 +46,56 @@ import java.util.Map;
 @Slf4j
 public class AuthController {
 
-    private final UserService userService;
-    private final JwtService jwtService;
-    private final PasswordEncoder passwordEncoder;
+    private final AuthService authService;
 
-    private static final String REFRESH_TOKEN_COOKIE = "refreshToken";
-    private static final int REFRESH_TOKEN_MAX_AGE = 7 * 24 * 60 * 60; //7 days in secondes
 
-    public AuthController(UserService userService, JwtService jwtService, PasswordEncoder passwordEncoder) {
-        this.userService = userService;
-        this.jwtService = jwtService;
-        this.passwordEncoder = passwordEncoder;
+    public AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
     /**
-     * Login endpoint that authenticates user and return token.
-     * Return access token in response body and refresh token in http-only cookie
+     * Authenticates a user using username and password.
      *
-     * @param userLoginRequest contains username and password
-     * @param response HTTP response to set refresh token cookie
-     * @return access token and user info
+     * <p>On successful authentication:</p>
+     * <ul>
+     *   <li>An access token is returned in the response body</li>
+     *   <li>A refresh token is issued and stored as an HTTP-only cookie</li>
+     * </ul>
+     *
+     * @param request  login request containing username and password
+     * @param response HTTP response used to attach the refresh token cookie
+     * @return authentication result containing access token and user identifier
      */
     @PostMapping("/login")
-    public ResponseEntity<?> login (@RequestBody @Valid UserLoginRequest userLoginRequest, HttpServletResponse response){
-
-        try{
-            log.info("Login attempt for user: {}", userLoginRequest.username());
-
-            boolean isValid = userService.getUser(userLoginRequest.username())
-                    .map(user -> passwordEncoder.matches(userLoginRequest.password(),user.getPassword()))
-                    .orElse(false);
-
-            if (!isValid){
-                log.warn("Login failed: Invalid credentials for username: {}", userLoginRequest.username());
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(Map.of("error", "Invalid username or password"));
-            }
-
-            String accessToken = jwtService.generateAccessToken(userLoginRequest.username());
-            String refreshToken = jwtService.generateRefreshToken(userLoginRequest.username());
-
-            setRefreshTokenCookie(response,refreshToken);
-
-            Map<String,String> responseBody  = new HashMap<>();
-            responseBody.put("token", accessToken);
-            responseBody.put("accessToken", accessToken);
-            responseBody.put("username", userLoginRequest.username());
-
-            log.info("Login success for user: {}", userLoginRequest.username());
-            return ResponseEntity.ok(responseBody);
-
-        } catch (Exception e) {
-            log.error("Login error for username: {}", userLoginRequest.username(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Login failed"));
-        }
+    public ResponseEntity<?> login (@RequestBody @Valid UserLoginRequest request, HttpServletResponse response){
+        return ResponseEntity.ok(authService.login(request, response));
     }
+
     /**
-     * Refresh endpoint that issues a new access token using the refresh token.
-     * Expects refresh token in HTTP-only cookie.
+     * Issues a new access token using a valid refresh token.
      *
-     * @param request HTTP request containing refresh token cookie
-     * @return new access token
+     * <p>The refresh token is expected to be provided via an HTTP-only cookie.</p>
+     *
+     * @param request HTTP request containing the refresh token cookie
+     * @return response containing a newly generated access token
      */
     @PostMapping("/refresh")
     public ResponseEntity<?> refresh(HttpServletRequest request) {
-        try {
-            // Extract refresh token from cookie
-            String refreshToken = extractRefreshTokenFromCookie(request);
-
-            if (refreshToken == null) {
-                log.warn("Refresh attempt without refresh token cookie");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(Map.of("error", "No refresh token provided"));
-            }
-
-            // Validate refresh token is not expired
-            jwtService.validateTokenNotExpired(refreshToken);
-
-            // Verify it's actually a refresh token (not an access token)
-            if (!jwtService.isRefreshToken(refreshToken)) {
-                log.error("Attempted to use non-refresh token for refresh");
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                        .body(Map.of("error", "Invalid token type"));
-            }
-
-            // Extract username and generate new access token
-            String username = jwtService.extractUsername(refreshToken);
-            String newAccessToken = jwtService.generateAccessToken(username);
-
-            log.info("Token refreshed successfully for user: {}", username);
-            return ResponseEntity.ok(Map.of("accessToken", newAccessToken));
-
-        } catch (JwtExpiredException e) {
-            log.warn("Refresh failed: Refresh token expired - {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "refresh_token_expired", "message", "Please login again"));
-
-        } catch (JwtInvalidException e) {
-            log.error("Refresh failed: Invalid refresh token - {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body(Map.of("error", "invalid_refresh_token", "message", "Invalid token"));
-
-        } catch (Exception e) {
-            log.error("Unexpected error during token refresh", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Token refresh failed"));
-        }
+        return ResponseEntity.ok(authService.refresh(request));
     }
     /**
-     * Logout endpoint that clears the refresh token cookie.
+     * Logs out the currently authenticated user.
      *
-     * @param response HTTP response to clear refresh token cookie
-     * @return success message
+     * <p>This operation invalidates the refresh token by clearing
+     * the corresponding HTTP-only cookie.</p>
+     *
+     * @param response HTTP response used to clear authentication cookies
+     * @return logout confirmation message
      */
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
-        try {
-            // Clear refresh token cookie by setting max age to 0
-            clearRefreshTokenCookie(response);
-
-            log.info("User logged out successfully");
-            return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
-
-        } catch (Exception e) {
-            log.error("Error during logout", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Logout failed"));
-        }
+        authService.logout(response);
+        return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
     }
-
-    /**
-     * Sets the refresh token in an HTTP-only cookie.
-     *
-     * @param response HTTP response
-     * @param refreshToken JWT refresh token
-     */
-    private void setRefreshTokenCookie(HttpServletResponse response, String refreshToken) {
-        Cookie cookie = new Cookie(REFRESH_TOKEN_COOKIE, refreshToken);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false);
-        cookie.setPath("/");
-        cookie.setMaxAge(REFRESH_TOKEN_MAX_AGE);
-
-        response.addCookie(cookie);
-        log.debug("Refresh token cookie set");
-    }
-
-    /**
-     * Extracts refresh token from HTTP-only cookie.
-     *
-     * @param request HTTP request
-     * @return refresh token string, or null if not found
-     */
-    private String extractRefreshTokenFromCookie(HttpServletRequest request) {
-        Cookie[] cookies = request.getCookies();
-
-        if (cookies != null) {
-            for (Cookie cookie : cookies) {
-                if (REFRESH_TOKEN_COOKIE.equals(cookie.getName())) {
-                    return cookie.getValue();
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
-     * Clears the refresh token cookie by setting max age to 0.
-     *
-     * @param response HTTP response
-     */
-    private void clearRefreshTokenCookie(HttpServletResponse response) {
-        Cookie cookie = new Cookie(REFRESH_TOKEN_COOKIE, null);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false);
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
-
-        response.addCookie(cookie);
-        log.debug("Refresh token cookie cleared");
-    }
-
-
 
 }

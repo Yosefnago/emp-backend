@@ -14,6 +14,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * REST controller for retrieving dashboard data and recent user activity.
+ *
+ * <p>Provides endpoints for fetching dashboard statistics and the last activity logs
+ * for the authenticated user.</p>
+ */
 @RestController
 @RequestMapping("dashboard")
 @Slf4j
@@ -27,6 +33,13 @@ public class DashboardController {
         this.activityLogsService = activityLogsService;
     }
 
+    /**
+     * Retrieves dashboard statistics for the authenticated user.
+     *
+     * @param user the currently authenticated user (injected via @CurrentUser)
+     * @return {@link ResponseEntity} containing {@link DashboardStatsResponse} with
+     *         employee count, attendants count, and projects onboard
+     */
     @GetMapping("/stats")
     public ResponseEntity<DashboardStatsResponse> getDashboardStats(@CurrentUser User user){
 
@@ -34,6 +47,13 @@ public class DashboardController {
         return ResponseEntity.ok(dashboardService.loadDashboardData(user.getUsername()));
     }
 
+    /**
+     * Retrieves the last few activity logs for the authenticated user.
+     *
+     * @param user the currently authenticated user (injected via @CurrentUser)
+     * @return {@link ResponseEntity} containing a list of {@link ActivityLogsDto}
+     *         representing the most recent activities performed by the user
+     */
     @GetMapping("/activity")
     public ResponseEntity<List<ActivityLogsDto>> getLastActivity(@CurrentUser User user){
 

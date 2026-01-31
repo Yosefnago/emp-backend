@@ -14,6 +14,14 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * REST controller for managing employees.
+ *
+ * <p>Provides endpoints to list, retrieve, add, update, and archive employees.
+ * Requires authentication, and actions are performed in the context of the
+ * current authenticated user.</p>
+ *
+ */
 @RestController
 @RequestMapping("/employees")
 @Slf4j
@@ -28,6 +36,12 @@ public class EmployeeController {
         this.archivedEmployeeService = archivedEmployeeService;
     }
 
+    /**
+     * Retrieves a list of all employees accessible by the authenticated user.
+     *
+     * @param user the current authenticated user
+     * @return list of employees
+     */
     @GetMapping()
     public ResponseEntity<List<EmployeeListResponse>> getAllEmployees(@CurrentUser User user) {
 
@@ -36,7 +50,13 @@ public class EmployeeController {
         return ResponseEntity.ok(employees);
     }
 
-
+    /**
+     * Retrieves detailed information for a specific employee by personal ID.
+     *
+     * @param user the current authenticated user
+     * @param personalId the employee's personal ID
+     * @return detailed employee information
+     */
     @GetMapping("/{personalId}")
     public ResponseEntity<EmployeeDetailsResponse> getEmployeeById(@CurrentUser User user, @PathVariable String personalId) {
 
@@ -47,6 +67,13 @@ public class EmployeeController {
         return ResponseEntity.ok(fullDetails);
     }
 
+    /**
+     * Adds a new employee.
+     *
+     * @param user the current authenticated user
+     * @param addEmployeeRequest employee data to add
+     * @return response indicating success
+     */
     @PostMapping("/add")
     public ResponseEntity<AddEmployeeResponse> addEmployee(@CurrentUser User user, @RequestBody @Valid AddEmployeeRequest addEmployeeRequest) {
 
@@ -56,6 +83,14 @@ public class EmployeeController {
         return ResponseEntity.ok(new AddEmployeeResponse("Employee added successfully"));
     }
 
+    /**
+     * Updates details of an existing employee.
+     *
+     * @param user the current authenticated user
+     * @param updateEmployeeDetailsRequest updated employee data
+     * @param personalId the employee's personal ID
+     * @return response indicating success
+     */
     @PutMapping("/{personalId}")
     public ResponseEntity<UpdateEmployeeDetailsResponse> updateEmployeeDetails(
             @CurrentUser User user,
@@ -68,6 +103,13 @@ public class EmployeeController {
         return ResponseEntity.ok(new UpdateEmployeeDetailsResponse("Employee details updated"));
     }
 
+    /**
+     * Archives (soft deletes) an employee.
+     *
+     * @param user the current authenticated user
+     * @param id the employee's personal ID
+     * @return empty response indicating success
+     */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEmployee(@CurrentUser User user, @PathVariable String id) {
 
@@ -77,6 +119,12 @@ public class EmployeeController {
         return ResponseEntity.ok().build();
     }
 
+    /**
+     * Test endpoint to verify authentication of the current user.
+     *
+     * @param user the current authenticated user
+     * @return map with the authenticated username
+     */
     @GetMapping("/test")
     public ResponseEntity<?> testAuth(@CurrentUser User user) {
 

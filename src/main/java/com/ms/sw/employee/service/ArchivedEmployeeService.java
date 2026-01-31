@@ -12,6 +12,14 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.Optional;
 
+/**
+ * Service responsible for archiving (soft deleting) employees.
+ *
+ * <p>Moves an employee from the active employee table to the archived employees table,
+ * records who performed the action, and logs the activity.</p>
+ *
+ * <p>Transactional: ensures that archiving and deletion occur atomically.</p>
+ */
 @Service
 public class ArchivedEmployeeService {
 
@@ -25,6 +33,23 @@ public class ArchivedEmployeeService {
         this.archivedEmployeeRepository = archivedEmployeeRepository;
     }
 
+    /**
+     * Archives an employee by moving their record to the archived table and removing from active employees.
+     *
+     * <p>Performs the following steps:</p>
+     * <ol>
+     *     <li>Validates that the employee exists and belongs to the requesting user</li>
+     *     <li>Copies employee details to {@link ArchivedEmployees}</li>
+     *     <li>Saves archived record with archiving metadata</li>
+     *     <li>Logs the archive action using {@link ActivityLogsService}</li>
+     *     <li>Deletes the employee from the active employees table</li>
+     * </ol>
+     *
+     * @param personalId the personal ID of the employee to archive
+     * @param username the username of the user performing the archive action
+     * @throws EmployeeNotFoundException if the employee does not exist or does not belong to the user
+     * @throws RuntimeException if archiving fails due to database or other unexpected errors
+     */
     @Transactional
     public void archiveEmployee(String personalId, String username) {
         Optional<Employees> employeeOpt = employeeRepository.findByPersonalId(personalId);

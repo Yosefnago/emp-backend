@@ -10,6 +10,14 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
+/**
+ * Service responsible for scheduling and sending automated notifications.
+ *
+ * <p>Uses Spring's {@link Scheduled} annotations to trigger tasks at specific times:
+ * - Event reminders 3 days in advance
+ * - Event notifications on the day of the event
+ * - Birthday reminders 7 days before</p>
+ */
 @Service
 public class NotificationSchedulerService {
 
@@ -25,6 +33,10 @@ public class NotificationSchedulerService {
         this.notificationService = notificationService;
     }
 
+    /**
+     * Sends notifications for events occurring within the next 3 days.
+     * Runs daily at 9:00 AM.
+     */
     @Scheduled(cron = "0 0 9 * * ?")
     public void sendUpcomingEventsNotification() {
         LocalDate today = LocalDate.now();
@@ -46,8 +58,8 @@ public class NotificationSchedulerService {
     }
 
     /**
-     * Check for events happening TODAY
-     * Runs every day at 8:00 AM
+     * Sends notifications for events occurring today.
+     * Runs daily at 8:00 AM.
      */
     @Scheduled(cron = "0 0 8 * * ?")
     public void sendTodayEventNotifications() {
@@ -68,9 +80,10 @@ public class NotificationSchedulerService {
             );
         }
     }
+
     /**
-     * Check for upcoming birthdays (7 days before)
-     * Runs every day at 7:00 AM
+     * Sends birthday reminders for employees whose birthdays are within the next 7 days.
+     * Runs daily at 7:00 AM.
      */
     @Scheduled(cron = "0 0 7 * * ?")
     public void sendBirthdayReminders() {

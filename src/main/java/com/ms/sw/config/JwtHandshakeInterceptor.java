@@ -16,8 +16,20 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 /**
- * Interceptor for WebSocket connections that validates JWT tokens.
- * This ensures WebSocket connections are authenticated before establishing.
+ * WebSocket handshake interceptor that validates JWT tokens on connection.
+ *
+ * <p>This interceptor ensures that all incoming WebSocket CONNECT messages
+ * contain a valid JWT in the "Authorization" header before establishing
+ * the connection. It sets the authenticated user in the Spring Security
+ * context and the STOMP session.</p>
+ *
+ * <p>Responsibilities:</p>
+ * <ul>
+ *     <li>Extract JWT from STOMP "Authorization" header</li>
+ *     <li>Validate token expiration and integrity</li>
+ *     <li>Set authenticated user in Spring Security context</li>
+ *     <li>Throw security exceptions for expired or invalid tokens</li>
+ * </ul>
  */
 @Component
 @Slf4j
@@ -29,6 +41,15 @@ public class JwtHandshakeInterceptor implements ChannelInterceptor {
         this.jwtService = jwtService;
     }
 
+    /**
+     * Intercepts WebSocket messages before sending to the channel.
+     * Validates CONNECT commands and sets authentication if the token is valid.
+     *
+     * @param message the WebSocket message
+     * @param channel the message channel
+     * @return the same message if validation succeeds
+     * @throws SecurityException if token is missing, expired, or invalid
+     */
     @Override
     public Message<?> preSend(@NonNull Message<?> message,@NonNull MessageChannel channel) {
         StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
@@ -62,6 +83,15 @@ public class JwtHandshakeInterceptor implements ChannelInterceptor {
         return message;
     }
 
+    /**
+     * Validates the JWT token from the STOMP header and extracts the username.
+     *
+     * @param accessor STOMP header accessor
+     * @return the username from the validated token
+     * @throws SecurityException if Authorization header is missing or malformed
+     * @throws JwtExpiredException if the token has expired
+     * @throws JwtInvalidException if the token is invalid or username is missing
+     */
     private String validateAndExtractUsername(StompHeaderAccessor accessor) {
         String authHeader = accessor.getFirstNativeHeader("Authorization");
 

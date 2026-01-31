@@ -11,6 +11,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * REST controller for accessing user activity logs.
+ *
+ * <p>Provides endpoints to retrieve all audit logs for the authenticated user.</p>
+ */
 @RestController
 @RequestMapping("logs")
 public class AuditLogsController {
@@ -21,6 +26,13 @@ public class AuditLogsController {
         this.activityLogsService = activityLogsService;
     }
 
+    /**
+     * Retrieves all activity logs for the authenticated user.
+     *
+     * @param user the currently authenticated user (injected via @CurrentUser)
+     * @return {@link ResponseEntity} containing a list of {@link ActivityLogsListDto}
+     *         representing all activities performed by or related to the user
+     */
     @GetMapping("/all")
     public ResponseEntity<List<ActivityLogsListDto>> getAll(@CurrentUser User user) {
 

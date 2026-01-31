@@ -13,7 +13,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.function.Function;
 
-
+/**
+ * Service responsible for JWT creation, parsing, and validation.
+ *
+ * <p>Supports access and refresh tokens, including expiration checks,
+ * claim extraction, and signature verification.</p>
+ */
 @Service
 @Slf4j
 public class JwtService {
@@ -29,12 +34,12 @@ public class JwtService {
     }
 
     /**
-     * Extracts username from token with full validation.
+     * Extracts the username (subject) from a JWT after full validation.
      *
      * @param token JWT token
-     * @return username (subject) from the token
-     * @throws JwtExpiredException if token has expired
-     * @throws JwtInvalidException if token is invalid (signature, malformed, erc.)
+     * @return username stored in the token subject
+     * @throws JwtExpiredException if the token is expired
+     * @throws JwtInvalidException if the token is invalid or malformed
      */
     public String extractUsername(String token) {
 
@@ -58,11 +63,11 @@ public class JwtService {
     }
 
     /**
-     * Validates that the token has not expired.
+     * Validates that a JWT has not expired.
      *
-     * @param token JWT token to validate
-     * @throws JwtExpiredException if token has expired
-     * @throws JwtInvalidException if token cannot be parsed
+     * @param token JWT token
+     * @throws JwtExpiredException if the token has expired
+     * @throws JwtInvalidException if validation fails
      */
     public void validateTokenNotExpired(String token) {
 
@@ -95,21 +100,21 @@ public class JwtService {
     }
 
     /**
-     * Extracts expiration date from token.
+     * Extracts the expiration timestamp from a JWT.
      *
      * @param token JWT token
-     * @return expiration date
+     * @return token expiration date
      */
     public Date extractExpiration(String token) {
         return extractClaim(token,Claims::getExpiration);
     }
 
     /**
-     * Generic method to extract any claim from token.
+     * Extracts a specific claim from a JWT.
      *
      * @param token JWT token
-     * @param claimsResolver function to extract specific claim
-     * @param <T> type of claim to extract
+     * @param claimsResolver function selecting the desired claim
+     * @param <T> claim type
      * @return extracted claim value
      */
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
@@ -132,10 +137,10 @@ public class JwtService {
     }
 
     /**
-     * Generates an access token for the given username.
+     * Generates a short-lived access token.
      *
-     * @param username user's username
-     * @return JWT access token
+     * @param username user identifier
+     * @return signed JWT access token
      */
     public String generateAccessToken(String username){
 
@@ -155,10 +160,10 @@ public class JwtService {
     }
 
     /**
-     * Generates a refresh token for the given username.
+     * Generates a long-lived refresh token.
      *
-     * @param username user's username
-     * @return JWT refresh token
+     * @param username user identifier
+     * @return signed JWT refresh token
      */
     public String generateRefreshToken(String username) {
 
@@ -179,11 +184,10 @@ public class JwtService {
     }
 
     /**
-     * Validates that a token is specifically a refresh token.
+     * Determines whether the given JWT is a refresh token.
      *
-     * @param token JWT token to validate
-     * @return true if token is a valid refresh token
-     * @throws JwtInvalidException if token is not a refresh token
+     * @param token JWT token
+     * @return {@code true} if the token is marked as a refresh token
      */
     public boolean isRefreshToken(String token){
 

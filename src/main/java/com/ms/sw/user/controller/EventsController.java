@@ -9,6 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
+/**
+ * REST controller for managing user events.
+ *
+ * <p>Provides endpoints for retrieving and creating events
+ * associated with the currently authenticated user.</p>
+ */
 @RestController
 @RequestMapping("events")
 public class EventsController {
@@ -19,18 +25,39 @@ public class EventsController {
         this.eventsService = eventsService;
     }
 
+    /**
+     * Retrieves all events for the current user.
+     *
+     * @param user authenticated user resolved from the security context
+     * @return list of all user events
+     */
     @GetMapping("/all")
     public ResponseEntity<List<EventDto>> getAllEvents(@CurrentUser User user) {
 
         List<EventDto> eventDtos = eventsService.getAllEvents(user.getUsername());
         return ResponseEntity.ok().body(eventDtos);
     }
+
+    /**
+     * Retrieves upcoming events for the current user.
+     *
+     * @param user authenticated user resolved from the security context
+     * @return list of upcoming events
+     */
     @GetMapping()
     public ResponseEntity<List<EventDto>> getEvents(@CurrentUser User user) {
 
         List<EventDto> eventDtos = eventsService.getUpcomingEvents(user.getUsername());
         return ResponseEntity.ok().body(eventDtos);
     }
+
+    /**
+     * Creates a new event for the current user.
+     *
+     * @param user     authenticated user
+     * @param eventDto event data to create
+     * @return HTTP 201 (Created) on success
+     */
     @PostMapping("/add")
     public ResponseEntity<EventDto> addEvent(@CurrentUser User user, @RequestBody EventDto eventDto) {
 
