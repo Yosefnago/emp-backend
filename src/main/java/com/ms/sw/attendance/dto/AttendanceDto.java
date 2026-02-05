@@ -4,13 +4,13 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 public record AttendanceDto(
-        Long id,
+        String personalId,
         LocalDate date,
         String name,
-        String position,
-        String department,
         LocalTime checkInTime,
         LocalTime checkOutTime,
-        String status
+        String status,
+        boolean travelAllow,
+        String notes
 ) {
 }

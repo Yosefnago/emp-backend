@@ -20,9 +20,6 @@ public class Attendance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name = "personal_id",nullable = false)
-    private String personalId;
-
     @Column(name = "date")
     private LocalDate date;
 
@@ -38,11 +35,11 @@ public class Attendance {
     @Column(name = "status")
     private String status;
 
+    @Column(name = "travel_alow")
+    private boolean travelAllow;
+
     @Column(name = "notes")
     private String notes;
-
-    @Column(name = "created_at")
-    private Timestamp createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(
