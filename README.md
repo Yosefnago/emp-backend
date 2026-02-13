@@ -7,7 +7,6 @@ Built using Spring Boot 4, JPA, PostgreSQL, and JWT-based authentication, follow
 
 
 ---
-### See javadoc here : http://localhost:63342/emp-backend/EmployeeManeger/target/reports/apidocs/index.html
 ## 📌 Features
 
 - 🔐 **User Authentication**
