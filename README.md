@@ -3,11 +3,10 @@
 Java & Spring Boot backend for a modular Employee Management System.
 
 This service exposes secure RESTful APIs for managing employees, notifications, salary details, authentication, and user-related operations.  
-Built using Spring Boot 3.5, JPA, PostgreSQL, and JWT-based authentication, following clean architecture and layered design.
+Built using Spring Boot 4, JPA, PostgreSQL, and JWT-based authentication, following clean architecture and layered design.
 
 
 ---
-
 ## 📌 Features
 
 - 🔐 **User Authentication**
@@ -56,8 +55,8 @@ Built using Spring Boot 3.5, JPA, PostgreSQL, and JWT-based authentication, foll
 
 ## 🧱 Tech Stack
 
-- **Java 17**
-- **Spring Boot 3.5**
+- **Java 25**
+- **Spring Boot 4.0.1**
 - **Spring Security**
 - **Spring Data JPA**
 - **PostgreSQL**
