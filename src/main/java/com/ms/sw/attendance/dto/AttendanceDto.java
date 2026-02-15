@@ -11,6 +11,7 @@ public record AttendanceDto(
         LocalTime checkOutTime,
         String status,
         boolean travelAllow,
-        String notes
+        String notes,
+        boolean attendanceClosed
 ) {
 }

@@ -8,7 +8,9 @@ public enum ActionType {
     DELETE("מחק"),
     UPDATE("עידכן"),
     ARCHIVE("ארכיון"),
-    RESTORE("שחזר");
+    RESTORE("שחזר"),
+    SENT_TO_PAYROLL("נשלח עיבוד שכר"),
+    GENERATED_PAYROLL("נשלח תלוש שכר");
 
     private final String hebrewLabel;
 

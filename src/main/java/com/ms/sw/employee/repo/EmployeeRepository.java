@@ -2,6 +2,7 @@ package com.ms.sw.employee.repo;
 
 import com.ms.sw.employee.dto.EmployeeDetailsResponse;
 import com.ms.sw.employee.dto.EmployeeListResponse;
+import com.ms.sw.employee.dto.EmployeePayrollDto;
 import com.ms.sw.employee.model.Employees;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -32,19 +33,19 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
 
     @Modifying
     @Query("""
-        DELETE FROM Employees e\s
-        WHERE e.personalId = :personalId\s
-        AND e.user.username = :ownerUsername\s
-       \s""")
+        DELETE FROM Employees e
+        WHERE e.personalId = :personalId
+        AND e.user.username = :ownerUsername
+       """)
     int deleteByPersonalIdAndOwner(@Param("personalId") String personalId, @Param("ownerUsername") String ownerUsername);
 
 
     @Query("""
-        SELECT e\s
+        SELECT e
         FROM Employees e
         JOIN e.user u
         WHERE e.personalId = :personalId AND u.username = :username
-   \s""")
+   """)
     Optional<EmployeeDetailsResponse> findByPersonalIdAndOwner(@Param("personalId") String personalId,
                                                                @Param("username") String username);
 
@@ -53,10 +54,10 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
 
     @Modifying
     @Query("""
-    UPDATE Employees e SET\s
-        e.firstName = :firstName,\s
-        e.lastName = :lastName,\s
-        e.email = :email,\s
+    UPDATE Employees e SET
+        e.firstName = :firstName,
+        e.lastName = :lastName,
+        e.email = :email,
         e.gender = :gender,
         e.birthDate = :birthDate,
         e.familyStatus = :familyStatus,
@@ -102,7 +103,7 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
 
     @Query(value = """
     SELECT * FROM employees
-    WHERE\s
+    WHERE
         (EXTRACT(MONTH FROM CAST(birth_date AS DATE)) = EXTRACT(MONTH FROM CAST(:startDate AS DATE))
          AND EXTRACT(DAY FROM CAST(birth_date AS DATE)) >= EXTRACT(DAY FROM CAST(:startDate AS DATE)))
     OR
@@ -115,5 +116,26 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
     List<Employees> findUpcomingBirthdays(
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate
+    );
+
+    @Query("""
+        select new com.ms.sw.employee.dto.EmployeePayrollDto(
+                e.personalId,
+                concat(e.firstName,' ',e.lastName) ,
+                e.department
+                )
+        from Employees e
+        where e.user.username = :username
+        AND e.personalId = :personalId
+        """)
+    EmployeePayrollDto getEmployeePayrollByPersonalId(
+            @Param("username") String username,
+            @Param("personalId") String personalId);
+
+
+    @Query("SELECT e FROM Employees e WHERE e.personalId = :personalId AND e.user.username = :username")
+    Optional<Employees> findEntityByPersonalIdAndUsername(
+            @Param("personalId") String personalId,
+            @Param("username") String username
     );
 }

@@ -1,16 +1,17 @@
 package com.ms.sw.user.service;
 
 import com.ms.sw.config.service.JwtService;
+import com.ms.sw.exception.auth.InvalidCredentialsException;
 import com.ms.sw.exception.auth.jwt.JwtInvalidException;
+import com.ms.sw.user.dto.RefreshTokenResponse;
 import com.ms.sw.user.dto.UserLoginRequest;
+import com.ms.sw.user.dto.UserLoginResponse;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Map;
 
 /**
  * Service responsible for authentication and token lifecycle management.
@@ -62,9 +63,9 @@ public class AuthService {
      *
      * @param request  login request containing username and password
      * @param response HTTP response used to attach the refresh token cookie
-     * @return a map containing the access token and username
+     * @return {@link UserLoginResponse} containing the access token and username
      */
-    public Map<String, String> login(UserLoginRequest request, HttpServletResponse response){
+    public UserLoginResponse login(UserLoginRequest request, HttpServletResponse response){
 
         log.info("Login attempt for user: {}", request.username());
 
@@ -74,6 +75,7 @@ public class AuthService {
 
         if (!isValid){
             log.warn("Login failed: Invalid credentials for username: {}", request.username());
+            throw new InvalidCredentialsException("Invalid credentials for username: " + request.username());
         }
 
         String accessToken = jwtService.generateAccessToken(request.username());
@@ -82,28 +84,17 @@ public class AuthService {
         setRefreshTokenCookie(response, refreshToken);
         log.info("Login success for user: {}", request.username());
 
-        return Map.of(
-                "accessToken", accessToken,
-                "username", request.username()
-        );
+        return new UserLoginResponse(accessToken, request.username());
     }
 
     /**
      * Issues a new access token based on a valid refresh token.
      *
-     * <p>The refresh token is expected to be supplied via an HTTP-only cookie.
-     * The token is validated for:</p>
-     * <ul>
-     *   <li>Existence</li>
-     *   <li>Expiration</li>
-     *   <li>Correct token type (refresh token)</li>
-     * </ul>
-     *
      * @param request HTTP request containing the refresh token cookie
-     * @return a map containing a newly generated access token
-     * @throws JwtInvalidException if the refresh token is missing or invalid
+     * @return {@link RefreshTokenResponse} containing a newly generated access token
+     * @throws  JwtInvalidException if the refresh token is missing or invalid
      */
-    public Map<String, String> refresh(HttpServletRequest request) {
+    public RefreshTokenResponse refresh(HttpServletRequest request) {
         String refreshToken = extractRefreshToken(request);
 
         if (refreshToken == null) {
@@ -119,7 +110,7 @@ public class AuthService {
         String username = jwtService.extractUsername(refreshToken);
         String newAccessToken = jwtService.generateAccessToken(username);
 
-        return Map.of("accessToken", newAccessToken);
+        return new RefreshTokenResponse(newAccessToken);
     }
 
     /**

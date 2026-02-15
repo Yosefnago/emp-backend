@@ -16,28 +16,28 @@ public interface ActivityLogsRepository extends JpaRepository<ActivityLogs, Long
 
 
     @Query("""
-        select\s
-                a.fromUser,
-                a.action,
-                a.affectedEmployee,
-                CAST( a .dateAction AS java.time.LocalDate),
-                cast( a .timeAction as java.time.LocalTime)
-                from ActivityLogs a \s
-                where a.fromUser = :username      \s
-                order by a.dateAction desc , a.timeAction desc\s
-               \s""")
-    List<ActivityLogsDto> getLastActivityByUsername(@Param("username") String username, PageRequest pageRequest);
-
-
-    @Query("""
-        select\s
+        select
                 a.fromUser,
                 a.action,
                 a.affectedEmployee,
                 CAST( a .dateAction AS java.time.LocalDate),
                 cast( a .timeAction as java.time.LocalTime)
                 from ActivityLogs a
-        where a.fromUser = :username      \s
-       \s""")
+                where a.fromUser = :username
+                order by a.dateAction desc , a.timeAction desc
+        """)
+    List<ActivityLogsDto> getLastActivityByUsername(@Param("username") String username, PageRequest pageRequest);
+
+
+    @Query("""
+        select
+                a.fromUser,
+                a.action,
+                a.affectedEmployee,
+                CAST( a .dateAction AS java.time.LocalDate),
+                cast( a .timeAction as java.time.LocalTime)
+                from ActivityLogs a
+        where a.fromUser = :username
+       """)
     List<ActivityLogsListDto> getAllActivity(@Param("username") String username);
 }

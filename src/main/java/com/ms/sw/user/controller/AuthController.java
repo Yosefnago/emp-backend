@@ -2,22 +2,19 @@ package com.ms.sw.user.controller;
 
 
 import com.dev.tools.Markers.ApiMarker;
-import com.ms.sw.exception.auth.jwt.JwtExpiredException;
-import com.ms.sw.exception.auth.jwt.JwtInvalidException;
+
+import com.ms.sw.user.dto.RefreshTokenResponse;
 import com.ms.sw.user.dto.UserLoginRequest;
-import com.ms.sw.config.service.JwtService;
+import com.ms.sw.user.dto.UserRegisterRequest;
+import com.ms.sw.user.dto.UserRegisterResponse;
 import com.ms.sw.user.service.AuthService;
 import com.ms.sw.user.service.UserService;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
@@ -47,10 +44,11 @@ import java.util.Map;
 public class AuthController {
 
     private final AuthService authService;
+    private final UserService userService;
 
-
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, UserService userService) {
         this.authService = authService;
+        this.userService = userService;
     }
 
     /**
@@ -72,6 +70,21 @@ public class AuthController {
     }
 
     /**
+     * User register endpoint.
+     *
+     *  <p>On success:</p>
+     *
+     * <ul>Returns UserRegisterDto response</ul>
+     * @param request user register request dto
+     * @return UserRegisterResponse and success message.
+     */
+    @PostMapping("register")
+    public ResponseEntity<UserRegisterResponse> register(@RequestBody UserRegisterRequest request){
+        userService.register(request);
+        return ResponseEntity.ok(new UserRegisterResponse(true,"User registered successfully"));
+    }
+
+    /**
      * Issues a new access token using a valid refresh token.
      *
      * <p>The refresh token is expected to be provided via an HTTP-only cookie.</p>
@@ -80,7 +93,7 @@ public class AuthController {
      * @return response containing a newly generated access token
      */
     @PostMapping("/refresh")
-    public ResponseEntity<?> refresh(HttpServletRequest request) {
+    public ResponseEntity<RefreshTokenResponse> refresh(HttpServletRequest request) {
         return ResponseEntity.ok(authService.refresh(request));
     }
     /**

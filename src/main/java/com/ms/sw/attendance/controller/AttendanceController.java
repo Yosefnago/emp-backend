@@ -1,16 +1,12 @@
 package com.ms.sw.attendance.controller;
 
-import com.ms.sw.attendance.dto.AttendanceDto;
-import com.ms.sw.attendance.dto.EmployeeOptionDto;
-import com.ms.sw.attendance.dto.SearchQuery;
-import com.ms.sw.attendance.dto.UpdateAttendanceRecord;
+import com.ms.sw.attendance.dto.*;
 import com.ms.sw.attendance.service.AttendanceService;
 import com.ms.sw.config.customUtils.CurrentUser;
 import com.ms.sw.user.model.User;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
 
 @RestController
@@ -54,7 +50,7 @@ public class AttendanceController {
         attendanceService.update(user.getUsername(),personalId,attendanceDto);
         return ResponseEntity.noContent().build();
     }
-
-
-
 }
+
+
+

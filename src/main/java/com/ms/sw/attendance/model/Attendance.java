@@ -5,7 +5,6 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.time.LocalTime;
 
@@ -40,6 +39,9 @@ public class Attendance {
 
     @Column(name = "notes")
     private String notes;
+
+    @Column(name = "is_attendance_closed",nullable = false,columnDefinition = "boolean default false")
+    private boolean attendanceClosed;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(

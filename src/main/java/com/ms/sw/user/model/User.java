@@ -33,6 +33,15 @@ public  class User  {
     @Column(name = "enabled")
     private boolean enabled;
 
+    @Column(name = "company_name")
+    private String companyName;
+
+    @Column(name = "company_id")
+    private String companyId;
+
+    @Column(name = "company_address")
+    private String companyAddress;
+
     @Column(name = "last_login")
     private Timestamp lastLogin;
 
@@ -41,6 +50,7 @@ public  class User  {
 
     @Column(name = "updated_at")
     private Timestamp updatedAt;
+
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @ToString.Exclude

@@ -1,13 +1,14 @@
 package com.ms.sw.attendance.service;
 
 import com.ms.sw.attendance.dto.AttendanceDto;
+import com.ms.sw.attendance.dto.AttendancePayrollDto;
+import com.ms.sw.attendance.dto.AttendanceSummaryRequest;
 import com.ms.sw.attendance.dto.EmployeeOptionDto;
 import com.ms.sw.attendance.repo.AttendanceRepository;
+import com.ms.sw.user.model.User;
 import jakarta.transaction.Transactional;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.nio.file.AccessDeniedException;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -59,6 +60,22 @@ public class AttendanceService {
                 attendanceDto.status(),
                 attendanceDto.notes()
         );
-
     }
+    public List<AttendancePayrollDto> getAttendancePayrollByPersonalId(String username, AttendanceSummaryRequest request) {
+        return attendanceRepository.loadAttendancePayrollDto(
+                username,
+                request.personalId(),
+                Integer.parseInt(request.year()),
+                Integer.parseInt(request.month())
+        );
+    }
+    public void updateAttendanceToClosed(User user, AttendanceSummaryRequest request) {
+        attendanceRepository
+                .updateAttendanceToClose(
+                        user.getUsername(),
+                        request.personalId(),
+                        Integer.parseInt(request.year()),
+                        Integer.parseInt(request.month()));
+    }
+
 }

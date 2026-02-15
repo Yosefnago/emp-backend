@@ -3,6 +3,7 @@ package com.ms.sw.attendance.repo;
 import com.ms.sw.attendance.dto.AttendanceDto;
 import com.ms.sw.attendance.dto.EmployeeOptionDto;
 import com.ms.sw.attendance.model.Attendance;
+import com.ms.sw.attendance.dto.AttendancePayrollDto;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -25,17 +26,18 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
                       a.checkInTime,
                       a.checkOutTime,
                       a.status,
-                      a.travelAllow,          
-                      a.notes\s
+                      a.travelAllow,
+                      a.notes,
+                      a.attendanceClosed
                       )
-           from Attendance a\s
+           from Attendance a
            join a.employee e
            where e.user.username = :username
            and a.date >= :startDate
            and a.date < :endDate
            and ( :department = '' or e.department = :department )
-           and ( :employeeName = '' or concat(e.firstName,' ',e.lastName) = :employeeName )                                                            \s
-          \s""")
+           and ( :employeeName = '' or concat(e.firstName,' ',e.lastName) = :employeeName )
+         """)
     List<AttendanceDto> getAllRecords(
             @Param("username") String username,
             @Param("startDate") LocalDate startDate,
@@ -46,25 +48,25 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
 
     @Query("""
             select new com.ms.sw.attendance.dto.EmployeeOptionDto(
-                e.personalId,        
+                e.personalId,
                 concat(e.firstName, ' ', e.lastName),
                 e.department
             )
             from Employees e
             where e.user.username = :username
-            """)
+           """)
     List<EmployeeOptionDto> loadMapOfEmployees(@Param("username") String username);
 
     @Modifying
     @Query("""
             UPDATE Attendance a
-            SET 
+            SET
                 a.checkInTime  = :checkInTime,
                 a.checkOutTime = :checkOutTime,
                 a.status       = :status,
-                a.notes = :notes        
+                a.notes = :notes
             WHERE a.employee.personalId = :personalId
-            and a.date = :date       
+            and a.date = :date
             AND a.employee.user.username = :username
         """)
     void updateOwnedRecord(
@@ -76,4 +78,42 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
             @Param("status") String status,
             @Param("notes") String notes
             );
+
+    @Query("""
+    SELECT new com.ms.sw.attendance.dto.AttendancePayrollDto(
+            a.employee.personalId,
+            a.date,
+            a.totalHours,
+            a.status,
+            a.travelAllow
+    )
+    FROM Attendance a
+    WHERE a.employee.user.username = :username
+      AND a.employee.personalId = :personalId
+      AND YEAR(a.date) = :year
+      AND MONTH(a.date) = :month
+    """)
+    List<AttendancePayrollDto> loadAttendancePayrollDto(
+            @Param("username") String username,
+            @Param("personalId") String personalId,
+            @Param("year") int year,
+            @Param("month") int month
+            );
+
+    @Modifying
+    @Query("""
+        update Attendance a
+        set a.attendanceClosed = true
+        where a.employee.user.username = :username
+        AND a.employee.personalId = :personalId
+        and YEAR(a.date) = :year
+        and MONTH(a.date) = :month
+    
+    """)
+    void updateAttendanceToClose(
+            @Param("username") String username,
+            @Param("personalId") String personalId,
+            @Param("year") int year,
+            @Param("month") int month
+    );
 }

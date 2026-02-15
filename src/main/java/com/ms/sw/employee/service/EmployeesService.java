@@ -1,9 +1,6 @@
 package com.ms.sw.employee.service;
 
-import com.ms.sw.employee.dto.AddEmployeeRequest;
-import com.ms.sw.employee.dto.EmployeeDetailsResponse;
-import com.ms.sw.employee.dto.EmployeeListResponse;
-import com.ms.sw.employee.dto.UpdateEmployeeDetailsRequest;
+import com.ms.sw.employee.dto.*;
 import com.ms.sw.employee.model.Employees;
 import com.ms.sw.exception.employees.EmployeeNotFoundException;
 import com.ms.sw.user.model.ActionType;
@@ -142,5 +139,14 @@ public class EmployeesService {
         if (updatedCount == 0) {
             throw new EmployeeNotFoundException("Employee not found or unauthorized to update.");
         }
+    }
+
+    public EmployeePayrollDto getEmployeePayrollByPersonalId(String username, String personalId) {
+        return employeeRepository.getEmployeePayrollByPersonalId(username, personalId);
+    }
+    public Employees getEmployeeEntityByPersonalId(String personalId, String username) {
+        return employeeRepository.findEntityByPersonalIdAndUsername(personalId, username)
+                .orElseThrow(() -> new EmployeeNotFoundException(
+                        "Employee not found: " + personalId));
     }
 }

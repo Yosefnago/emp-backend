@@ -1,0 +1,235 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+        "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" dir="rtl" lang="he">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>תלוש שכר</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            direction: rtl;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background-color: #dee2e6;
+            padding: 10px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: bold;
+            border: 1px solid #333;
+        }
+        td {
+            padding: 8px 10px;
+            text-align: center;
+            font-size: 12px;
+            border: 1px solid #333;
+        }
+        .text-right {
+            text-align: right;
+            padding-right: 15px;
+        }
+        .header-row {
+            background-color: #495057;
+            color: white;
+            font-weight: bold;
+            font-size: 14px;
+            text-align: center;
+            padding: 10px;
+        }
+        .total-row {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        .net-salary-row {
+            background-color: #d4edda;
+            font-weight: bold;
+            font-size: 15px;
+        }
+        .employer-section {
+            background-color: rgba(78, 70, 70, 0.5);
+        }
+    </style>
+</head>
+<body>
+
+<table style="border: 2px solid #333; max-width: 800px; margin: 0 auto; background: white;">
+
+    <tr style="background-color: #f8f9fa;">
+        <td style="width: 34%; padding: 15px; border: none; text-align: center;">
+            <strong style="font-size: 20px;">רכש שולת</strong><br/>
+            <span style="font-size: 14px; color: #666;">{{monthName}} {{year}}</span>
+        </td>
+        <td style="width: 33%; padding: 15px; border: none; text-align: right;">
+            <strong style="font-size: 18px;">{{companyName}}</strong><br/>
+            <span style="font-size: 11px; color: #666;">{{companyAddress}} | {{taxId}} :פ.ח</span>
+        </td>
+        <td style="width: 33%; border: none;"></td>
+    </tr>
+
+
+    <tr style="background-color: #e9ecef; border-top: 2px solid #333;">
+        <td colspan="3" style="padding: 12px 20px; font-size: 13px; text-align: right; border: none;">
+            {{paymentDate}} <strong>:םולשת ךיראת</strong> |
+            {{department}} <strong>:הקלחמ</strong> |
+            {{personalId}} <strong>:ז.ת</strong> |
+            {{employeeName}} <strong>:דבוע םש</strong>
+        </td>
+    </tr>
+
+    <tr>
+        <td colspan="3" class="header-row" style="border-top: 2px solid #333;">םימולשת טוריפ</td>
+    </tr>
+</table>
+
+<table style="border: 2px solid #333; max-width: 800px; margin: 0 auto; background: white; border-top: none;">
+    <thead>
+    <tr>
+        <th style="width: 15%;">תורעה</th>
+        <th style="width: 20%;">מוכס</th>
+        <th style="width: 15%;">ףירעת</th>
+        <th style="width: 15%;">תומכ</th>
+        <th style="width: 35%;">רואית</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td class="text-right">דוסי רכש</td>
+        <td>{{regularPay}}</td>
+        <td>{{hourlyRate}}</td>
+        <td>{{regularHours}}</td>
+        <td>תוליגר תועש</td>
+    </tr>
+    <tr>
+        <td class="text-right">125% תופסונ תועש</td>
+        <td>{{overtime125Pay}}</td>
+        <td>{{overtime125Rate}}</td>
+        <td>{{overtime125Hours}}</td>
+        <td>125%</td>
+    </tr>
+    <tr>
+        <td class="text-right">תופסות תועש 150%</td>
+        <td>{{overtime150Pay}}</td>
+        <td>{{overtime150Rate}}</td>
+        <td>{{overtime150Hours}}</td>
+        <td>150%</td>
+    </tr>
+    <tr>
+        <td class="text-right">תועיסנ ימד</td>
+        <td>{{travelAllowance}}</td>
+        <td>22.60</td>
+        <td>{{travelDays}}</td>
+        <td>םירחא םימולשת</td>
+    </tr>
+    <tr class="total-row">
+        <td>{{grossSalary}}</td>
+        <td class="text-right" colspan="3">וטורב כ"הס</td>
+        <td></td>
+    </tr>
+    </tbody>
+</table>
+
+<table style="border: 2px solid #333; max-width: 800px; margin: 0 auto; background: white; border-top: none;">
+    <tr>
+        <td class="header-row">םייוכינ</td>
+    </tr>
+</table>
+
+<table style="border: 2px solid #333; max-width: 800px; margin: 0 auto; background: white; border-top: none;">
+    <thead>
+    <tr>
+        <th style="width: 10%;">תורעה</th>
+        <th style="width: 20%;">םוכס</th>
+        <th style="width: 15%;">רועיש</th>
+        <th style="width: 20%;">בושיח סיסב</th>
+        <th style="width: 35%;">רואית</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td class="text-right">היסנפ ןרק</td>
+        <td>{{employeePension}}</td>
+        <td>6.00%</td>
+        <td>{{grossSalary}}</td>
+        <td>דבוע</td>
+    </tr>
+    <tr>
+        <td class="text-right">ימואל חוטיב</td>
+        <td>{{nationalInsurance}}</td>
+        <td>-</td>
+        <td>{{grossSalary}}</td>
+        <td>דבוע</td>
+    </tr>
+    <tr>
+        <td class="text-right">הסנכה סמ</td>
+        <td>{{incomeTax}}</td>
+        <td>-</td>
+        <td>{{taxableIncome}}</td>
+        <td>-</td>
+    </tr>
+    <tr class="total-row">
+        <td>{{totalDeductions}}</td>
+        <td class="text-right" colspan="3">םייוכינ כ"הס</td>
+        <td></td>
+    </tr>
+    <tr class="net-salary-row">
+        <td style="padding: 15px;">{{netSalary}}</td>
+        <td class="text-right" colspan="3" style="padding: 15px;">םולשתל וטנ רכש</td>
+        <td></td>
+    </tr>
+    </tbody>
+</table>
+
+<table style="border: 2px solid #333; max-width: 800px; margin: 0 auto; background: white; border-top: none;">
+    <tr>
+        <td class="header-row employer-section">דיבעמ תושרפה - ףסונ טוריפ</td>
+    </tr>
+</table>
+
+<table style="border: 2px solid #333; max-width: 800px; margin: 0 auto; background: white; border-top: none;">
+    <thead>
+    <tr>
+        <th style="width: 25%;">םוכס</th>
+        <th style="width: 15%;">רועיש</th>
+        <th style="width: 20%;">בושיח סיסב</th>
+        <th style="width: 40%;">רואית</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr>
+        <td>{{grossSalary}}</td>
+        <td>{{employerPension}}</td>
+        <td>6.50%</td>
+        <td class="text-right">דיבעמ קלח - היסנפ</td>
+    </tr>
+    <tr>
+        <td>{{grossSalary}}</td>
+        <td>{{employerSeverance}}</td>
+        <td>8.33%</td>
+        <td class="text-right">םייוציפ</td>
+    </tr>
+    <tr>
+        <td>{{employerNI}}</td>
+        <td>{{grossSalary}}</td>
+        <td>-</td>
+        <td class="text-right">דיבעמ קלח - ימואל חוטיב</td>
+    </tr>
+    <tr class="total-row employer-section">
+        <td>{{totalEmployerCost}}</td>
+        <td class="text-right" colspan="3">דיבעמ תולע כ"הס</td>
+    </tr>
+    </tbody>
+</table>
+
+<table style="border: 2px solid #333; max-width: 800px; margin: 0 auto; background: white; border-top: 2px solid #333;">
+    <tr style="background-color: #f8f9fa;">
+        <td style="padding: 15px; text-align: center; font-size: 11px; color: #666; border: none;">
+            דבלב ימינפ שומישל הז ךמסמ {{generationDate}} | םויב תיטמוטוא קפוה הז שולת
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

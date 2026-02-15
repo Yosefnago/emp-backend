@@ -12,23 +12,23 @@ import java.util.List;
 public interface EventsRepository extends JpaRepository<Events, Long> {
 
     @Query("""
-        select\s
+        select
                 e.eventName,
                 e.eventDate,
                 e.eventTime,
                 e.priority,
                 e.description,
                 e.location,
-                e.numberOfAttendance                                               \s
-                 from Events e\s
-        where e.user.username = :username   \s
-        order by e.eventDate,e.eventTime desc         \s
-       \s""")
+                e.numberOfAttendance
+                 from Events e
+        where e.user.username = :username
+        order by e.eventDate,e.eventTime desc
+       """)
     List<EventDto> getEventsByUsername(@Param("username") String username);
 
 
     @Query("""
-        select\s
+        select
         e.eventName,
         e.eventDate,
         e.eventTime,
@@ -38,8 +38,8 @@ public interface EventsRepository extends JpaRepository<Events, Long> {
         e.numberOfAttendance
           from Events  e
           where e.user.username = :username
-          order by e.eventDate,e.eventTime desc                                                            \s
-       \s""")
+          order by e.eventDate,e.eventTime desc
+       """)
     List<EventDto> getUpcomingEvents(@Param("username") String username);
 
 
@@ -50,8 +50,8 @@ public interface EventsRepository extends JpaRepository<Events, Long> {
     List<Events> findEventsBetweenDates(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
     @Query("""
-            SELECT e FROM Events e\s
+            SELECT e FROM Events e
             WHERE e.eventDate = :date
-   \s""")
+   """)
     List<Events> findEventsByDate(@Param("date") LocalDate date);
 }
