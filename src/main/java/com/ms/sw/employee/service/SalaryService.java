@@ -19,10 +19,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
+
 import static com.ms.sw.employee.service.PayrollConstants.*;
 
 /**
@@ -46,27 +44,27 @@ public class SalaryService {
      * Fetches salary data and calculates payroll.
      */
     public void fetchSalaryData(User user, AttendanceSummaryRequest request) {
-        try (var executor = Executors.newVirtualThreadPerTaskExecutor()) {
+
+        // changed from CompletableFuture to StructuredTaskScope
+        try(var scope = StructuredTaskScope.open(StructuredTaskScope.Joiner.awaitAllSuccessfulOrThrow())){
+
+            var employeeData = scope.fork(()->employeesService.getEmployeePayrollByPersonalId(user.getUsername(),request.personalId()));
+            var attendanceData = scope.fork(()-> attendanceService.getAttendancePayrollByPersonalId(user.getUsername(), request));
+            var salaryData = scope.fork(()-> salaryDetailsRepository.findSalaryDetailsOfEmployee(user.getUsername(),request.personalId()));
+
+            scope.join();
+
+            var emp = employeeData.get();
+            var atd = attendanceData.get();
+            var sal = salaryData.get();
+
+            validateFetchedData(emp,atd,sal);
+            calculateSalary(user, emp, atd, sal);
 
             activityLogsService.logAction(ActionType.SENT_TO_PAYROLL,"לעובד "+request.employeeName(),user.getUsername());
-
-            var employeeFuture = fetchEmployeeData(user.getUsername(), request.personalId(), executor);
-            var attendanceFuture = fetchAttendanceData(user.getUsername(), request, executor);
-            var salaryDetailsFuture = fetchSalaryDetails(user.getUsername(), request.personalId(), executor);
-
-            CompletableFuture.allOf(employeeFuture, attendanceFuture, salaryDetailsFuture).join();
-
-            var employee = employeeFuture.join();
-            var attendance = attendanceFuture.join();
-            var salaryDetails = salaryDetailsFuture.join();
-
-            validateFetchedData(employee, attendance, salaryDetails);
-
-            calculateSalary(user, employee, attendance, salaryDetails);
-
-        } catch (CompletionException e) {
-            log.error("Error while trying to fetch data from db: {}", e.getCause().getMessage());
-            throw new RuntimeException(e.getCause());
+        }catch (StructuredTaskScope.FailedException | InterruptedException e){
+            log.debug("Error while trying to fetch data from db");
+            log.error("{}",e.getMessage());
         }
     }
 
@@ -102,35 +100,9 @@ public class SalaryService {
         String pdfPath = pdfGenerator.generateSalaryPdf(pdfData);
         saveSalaryRecord(user.getUsername(), employee.personalId(), pdfData, netSalary, pdfPath);
 
+        // log to be removed later. by adding time schedular for generating tlush.
         activityLogsService.logAction(ActionType.GENERATED_PAYROLL,"לעובד "+employee.employeeName(),user.getUsername());
         log.info("Salary generated for {} ({})", employee.employeeName(), employee.personalId());
-    }
-
-    /**
-     * DATA FETCHING
-     */
-    private CompletableFuture<EmployeePayrollDto> fetchEmployeeData(
-            String username, String personalId, ExecutorService  executor) {
-        return CompletableFuture.supplyAsync(
-                () -> employeesService.getEmployeePayrollByPersonalId(username, personalId),
-                executor
-        );
-    }
-
-    private CompletableFuture<List<AttendancePayrollDto>> fetchAttendanceData(
-            String username, AttendanceSummaryRequest request, ExecutorService  executor) {
-        return CompletableFuture.supplyAsync(
-                () -> attendanceService.getAttendancePayrollByPersonalId(username, request),
-                executor
-        );
-    }
-
-    private CompletableFuture<SalaryDetailsDto> fetchSalaryDetails(
-            String username, String personalId, ExecutorService executor) {
-        return CompletableFuture.supplyAsync(
-                () -> salaryDetailsRepository.findSalaryDetailsOfEmployee(username, personalId),
-                executor
-        );
     }
 
     private void validateFetchedData(EmployeePayrollDto employee,
