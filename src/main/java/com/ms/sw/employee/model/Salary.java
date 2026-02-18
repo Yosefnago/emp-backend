@@ -23,10 +23,10 @@ public class Salary {
     private double salaryAmount;
 
     @Column(name = "salary_month")
-    private int month;
+    private int salaryMonth;
 
     @Column(name = "salary_year")
-    private int year;
+    private int salaryYear;
 
     @Column(name = "payment_date")
     private LocalDate paymentDate;

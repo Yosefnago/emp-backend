@@ -338,8 +338,8 @@ public class SalaryService {
         Salary salary = new Salary();
         salary.setEmployee(employee);
         salary.setSalaryAmount(netSalary);
-        salary.setMonth(pdfData.month());
-        salary.setYear(pdfData.year());
+        salary.setSalaryMonth(pdfData.month());
+        salary.setSalaryYear(pdfData.year());
         salary.setPaymentDate(LocalDate.now());
         salary.setPathOfTlush(pdfPath);
 

@@ -1,5 +1,6 @@
 package com.ms.sw.user.service;
 
+import com.ms.sw.user.dto.UserProfileDto;
 import com.ms.sw.user.dto.UserRegisterRequest;
 import com.ms.sw.user.model.User;
 import com.ms.sw.exception.auth.EmailAlreadyExistsException;
@@ -69,6 +70,18 @@ public class UserService {
         user.setEmail(userRegisterRequest.email());
 
         return userRepository.save(user);
+    }
+
+    public UserProfileDto getUserProfileDto(String username) {
+        var user = userRepository.findByUsername(username).get();
+
+        return new UserProfileDto(
+                user.getUsername(),
+                user.getEmail(),
+                user.getCompanyId(),
+                user.getCompanyName(),
+                user.getCompanyAddress()
+        );
     }
 
 }

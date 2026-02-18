@@ -75,7 +75,7 @@ public class AuthService {
 
         if (!isValid){
             log.warn("Login failed: Invalid credentials for username: {}", request.username());
-            throw new InvalidCredentialsException("Invalid credentials for username: " + request.username());
+            return new UserLoginResponse(null, null);
         }
 
         String accessToken = jwtService.generateAccessToken(request.username());
