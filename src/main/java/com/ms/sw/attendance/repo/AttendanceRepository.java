@@ -35,7 +35,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
            where e.user.username = :username
            and a.date >= :startDate
            and a.date < :endDate
-           and ( :department = '' or e.department = :department )
+           and ( :department = '' or e.department.departmentName = :department )
            and ( :employeeName = '' or concat(e.firstName,' ',e.lastName) = :employeeName )
          """)
     List<AttendanceDto> getAllRecords(
@@ -50,7 +50,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
             select new com.ms.sw.attendance.dto.EmployeeOptionDto(
                 e.personalId,
                 concat(e.firstName, ' ', e.lastName),
-                e.department
+                e.department.departmentName
             )
             from Employees e
             where e.user.username = :username

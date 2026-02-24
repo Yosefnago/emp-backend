@@ -5,6 +5,7 @@ public record UserProfileDto(
         String email,
         String companyId,
         String companyName,
-        String companyAddress
+        String companyAddress,
+        String phoneNumber
 ) {
 }

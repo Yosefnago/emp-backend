@@ -1,6 +1,7 @@
 package com.ms.sw.employee.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ms.sw.user.model.Department;
 import com.ms.sw.user.model.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -55,9 +56,6 @@ public class Employees {
     @Column(name = "position")
     private String position;
 
-    @Column(name = "department")
-    private String department;
-
     @Column(name = "hire_date")
     private LocalDate hireDate;
 
@@ -78,5 +76,8 @@ public class Employees {
     @JsonIgnore
     private User user;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    private Department department;
 
 }

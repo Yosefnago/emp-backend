@@ -16,6 +16,15 @@ public class SalaryDetails {
     @JoinColumn(name = "personal_id", referencedColumnName = "personal_id")
     private Employees employee;
 
+    @Column(name = "pension_fund")
+    private String pensionFund;
+
+    @Column(name = "provident_fund")
+    private String providentFund;
+
+    @Column(name = "insurance_company")
+    private String insuranceCompany;
+
     @Column(name = "total_seek_days")
     private double totalSeekDays;
 

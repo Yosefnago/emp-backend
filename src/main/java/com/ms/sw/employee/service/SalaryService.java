@@ -317,6 +317,7 @@ public class SalaryService {
                 firstAttendanceDate.getYear(), firstAttendanceDate.getMonthValue(),
                 employee.employeeName(), employee.personalId(), employee.department(),
                 LocalDate.now(),
+                salaryDetails.pensionFund(),salaryDetails.providentFund(),salaryDetails.insuranceCompany(),
                 hours.regularHours(), hours.hours125(), hours.hours150(), travelDays,
                 salaryDetails.salaryPerHour(),
                 gross.regularPay(), gross.overtime125Pay(), gross.overtime150Pay(),

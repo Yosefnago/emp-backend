@@ -42,6 +42,9 @@ public  class User  {
     @Column(name = "company_address")
     private String companyAddress;
 
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
     @Column(name = "last_login")
     private Timestamp lastLogin;
 

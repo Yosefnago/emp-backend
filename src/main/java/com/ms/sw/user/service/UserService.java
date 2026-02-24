@@ -1,11 +1,15 @@
 package com.ms.sw.user.service;
 
+import com.ms.sw.exception.auth.UserNotFoundException;
+import com.ms.sw.user.dto.PasswordUpdateRequest;
+import com.ms.sw.user.dto.PasswordUpdateResponse;
 import com.ms.sw.user.dto.UserProfileDto;
 import com.ms.sw.user.dto.UserRegisterRequest;
 import com.ms.sw.user.model.User;
 import com.ms.sw.exception.auth.EmailAlreadyExistsException;
 import com.ms.sw.exception.auth.UserAlreadyExistsException;
 import com.ms.sw.user.repo.UserRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -80,8 +84,44 @@ public class UserService {
                 user.getEmail(),
                 user.getCompanyId(),
                 user.getCompanyName(),
-                user.getCompanyAddress()
+                user.getCompanyAddress(),
+                user.getPhoneNumber()
         );
+    }
+
+    @Transactional
+    public void updateUserInfo(String username, UserProfileDto userProfileDto) {
+        userRepository.updateUserProfileByUsername(
+                username,
+                userProfileDto.email(),
+                userProfileDto.companyId(),
+                userProfileDto.companyName(),
+                userProfileDto.companyAddress(),
+                userProfileDto.phoneNumber()
+        );
+    }
+
+    @Transactional
+    public PasswordUpdateResponse changePassword(String username, PasswordUpdateRequest passRequest) {
+
+        var user = userRepository.findByUsername(username).orElseThrow(() ->  new UserNotFoundException(username));
+
+        if (!passwordEncoder.matches(passRequest.oldPass().trim(), user.getPassword().trim())) {
+            return new PasswordUpdateResponse("סיסמא ישנה לא תואמת", false);
+        }
+
+        if (!passRequest.newPass().trim().equals(passRequest.newPassAgain().trim())) {
+            return new PasswordUpdateResponse("סיסמא חדשה לא תואמת", false);
+        }
+
+        if (passwordEncoder.matches(passRequest.newPass().trim(), user.getPassword().trim())) {
+            return new PasswordUpdateResponse("הסיסמה החדשה חייבת להיות שונה מהישנה", false);
+        }
+
+        user.setPassword(passwordEncoder.encode(passRequest.newPass().trim()));
+
+        userRepository.save(user);
+        return new PasswordUpdateResponse("סיסמא שונתה בהצלחה",true);
     }
 
 }

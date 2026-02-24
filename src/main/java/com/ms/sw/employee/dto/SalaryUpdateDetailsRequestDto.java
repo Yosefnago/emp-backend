@@ -1,13 +1,14 @@
 package com.ms.sw.employee.dto;
 
-public record SalaryDetailsDto(
+public record SalaryUpdateDetailsRequestDto(
+        String personalId,
         String pensionFund,
         String providentFund,
         String insuranceCompany,
-        double totalSeekDays,
-        double totalVacationDays,
         double salaryPerHour,
         double seniority,
-        double creditPoints
+        double creditPoints,
+        double totalSeekDays,
+        double totalVacationDays
 ) {
 }

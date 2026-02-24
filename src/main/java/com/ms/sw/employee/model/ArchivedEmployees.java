@@ -1,5 +1,6 @@
 package com.ms.sw.employee.model;
 
+import com.ms.sw.user.model.Department;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -56,9 +57,6 @@ public class ArchivedEmployees {
     @Column(name = "position")
     private String position;
 
-    @Column(name = "department")
-    private String department;
-
     @Column(name = "hire_date")
     private LocalDate hireDate;
 
@@ -76,4 +74,8 @@ public class ArchivedEmployees {
 
     @Column(name = "archived_by")
     private String archivedBy;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department_id")
+    private Department department;
 }

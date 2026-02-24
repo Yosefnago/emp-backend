@@ -17,6 +17,9 @@ public record SalarySlipData(
         String personalId,
         String department,
         LocalDate paymentDate,
+        String pensionFund,
+        String providentFund,
+        String insuranceCompany,
 
         // Work hours
         double  regularHours,

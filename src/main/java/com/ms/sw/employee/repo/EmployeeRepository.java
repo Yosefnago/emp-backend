@@ -16,10 +16,17 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
 
 
     @Query("""
-        SELECT e
-        FROM Employees e
-        JOIN e.user u
-        WHERE u.username = :username
+        select new com.ms.sw.employee.dto.EmployeeListResponse(
+                e.personalId,
+                e.firstName,
+                e.lastName,
+                e.email,
+                e.phoneNumber,
+                e.department.departmentName,
+                e.address                    
+            )
+        from Employees e  
+        where e.user.username =:username       
     """)
     List<EmployeeListResponse> getAllEmployeesByOwner(@Param("username") String username);
 
@@ -41,10 +48,27 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
 
 
     @Query("""
-        SELECT e
-        FROM Employees e
-        JOIN e.user u
-        WHERE e.personalId = :personalId AND u.username = :username
+        select new com.ms.sw.employee.dto.EmployeeDetailsResponse(
+           e.firstName,
+           e.lastName,
+           e.personalId,
+           e.email,
+           e.gender,
+           e.birthDate,
+           e.familyStatus,
+           e.phoneNumber,
+           e.position,
+           e.department.departmentName,
+           e.address,
+           e.city,
+           e.country,
+           e.hireDate,
+           e.jobType,
+           e.status,
+           e.statusAttendance,
+           e.updatedAt                                                   
+           )
+        from Employees e    
    """)
     Optional<EmployeeDetailsResponse> findByPersonalIdAndOwner(@Param("personalId") String personalId,
                                                                @Param("username") String username);
@@ -122,7 +146,7 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
         select new com.ms.sw.employee.dto.EmployeePayrollDto(
                 e.personalId,
                 concat(e.firstName,' ',e.lastName) ,
-                e.department
+                e.department.departmentName
                 )
         from Employees e
         where e.user.username = :username

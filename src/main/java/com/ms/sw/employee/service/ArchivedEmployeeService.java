@@ -27,7 +27,9 @@ public class ArchivedEmployeeService {
     private final ActivityLogsService activityLogsService;
     private final ArchivedEmployeeRepository archivedEmployeeRepository;
 
-    public  ArchivedEmployeeService(EmployeeRepository employeeRepository, ActivityLogsService activityLogsService, ArchivedEmployeeRepository archivedEmployeeRepository) {
+    public  ArchivedEmployeeService(EmployeeRepository employeeRepository,
+                                    ActivityLogsService activityLogsService,
+                                    ArchivedEmployeeRepository archivedEmployeeRepository) {
         this.employeeRepository = employeeRepository;
         this.activityLogsService = activityLogsService;
         this.archivedEmployeeRepository = archivedEmployeeRepository;
@@ -80,14 +82,16 @@ public class ArchivedEmployeeService {
             archivedEmployee.setCity(employee.getCity());
             archivedEmployee.setCountry(employee.getCountry());
             archivedEmployee.setPosition(employee.getPosition());
-            archivedEmployee.setDepartment(employee.getDepartment());
             archivedEmployee.setHireDate(employee.getHireDate());
             archivedEmployee.setJobType(employee.getJobType());
             archivedEmployee.setStatus(employee.getStatus());
             archivedEmployee.setUpdatedAt(employee.getUpdatedAt());
+            archivedEmployee.setDepartment(employee.getDepartment());
 
             archivedEmployee.setArchivedAt(LocalDate.now());
             archivedEmployee.setArchivedBy(username);
+
+
 
             archivedEmployeeRepository.save(archivedEmployee);
 

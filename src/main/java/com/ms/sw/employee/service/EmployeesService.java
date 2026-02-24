@@ -4,9 +4,11 @@ import com.ms.sw.employee.dto.*;
 import com.ms.sw.employee.model.Employees;
 import com.ms.sw.exception.employees.EmployeeNotFoundException;
 import com.ms.sw.user.model.ActionType;
+import com.ms.sw.user.model.Department;
 import com.ms.sw.user.model.User;
 import com.ms.sw.exception.employees.AddEmployeeException;
 import com.ms.sw.employee.repo.EmployeeRepository;
+import com.ms.sw.user.repo.DepartmentRepository;
 import com.ms.sw.user.service.ActivityLogsService;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
@@ -25,10 +27,12 @@ public class EmployeesService {
 
     private final EmployeeRepository employeeRepository;
     private final ActivityLogsService activityLogsService;
+    private final DepartmentRepository departmentRepository;
 
-    public EmployeesService(EmployeeRepository employeeRepository,ActivityLogsService activityLogsService) {
+    public EmployeesService(EmployeeRepository employeeRepository,DepartmentRepository departmentRepository,ActivityLogsService activityLogsService) {
         this.employeeRepository = employeeRepository;
         this.activityLogsService = activityLogsService;
+        this.departmentRepository = departmentRepository;
     }
 
     /**
@@ -69,11 +73,14 @@ public class EmployeesService {
             employee.setCity(addEmployeeRequest.city());
             employee.setCountry(addEmployeeRequest.country());
             employee.setPosition(addEmployeeRequest.position());
-            employee.setDepartment(addEmployeeRequest.department());
             employee.setHireDate(addEmployeeRequest.hireDate());
             employee.setStatus(addEmployeeRequest.status());
             employee.setUpdatedAt(LocalDate.now());
             employee.setUser(user);
+
+            Department department = departmentRepository.findByDepartmentName(addEmployeeRequest.department())
+                            .orElseThrow(() -> new AddEmployeeException("מחלקה בשם "+addEmployeeRequest.department() +"לא נמצאה"));
+            employee.setDepartment(department);
 
             employeeRepository.save(employee);
 
