@@ -2,11 +2,10 @@ package com.ms.sw.employee.service;
 
 import com.ms.sw.employee.dto.*;
 import com.ms.sw.employee.model.Employees;
-import com.ms.sw.exception.employees.EmployeeNotFoundException;
+import com.ms.sw.exception.employee.EmployeeNotFoundException;
 import com.ms.sw.user.model.ActionType;
 import com.ms.sw.user.model.Department;
 import com.ms.sw.user.model.User;
-import com.ms.sw.exception.employees.AddEmployeeException;
 import com.ms.sw.employee.repo.EmployeeRepository;
 import com.ms.sw.user.repo.DepartmentRepository;
 import com.ms.sw.user.service.ActivityLogsService;
@@ -105,9 +104,10 @@ public class EmployeesService {
      */
     public EmployeeDetailsResponse getEmployeeByPersonalId(String personalId, String username) {
 
-
         return employeeRepository.findByPersonalIdAndOwner(personalId, username)
-                .orElseThrow(() -> new EmployeeNotFoundException("Employee not found or unauthorized."));
+                            .orElseThrow(() -> new EmployeeNotFoundException("Employee not found or unauthorized."));
+
+
     }
 
     /**

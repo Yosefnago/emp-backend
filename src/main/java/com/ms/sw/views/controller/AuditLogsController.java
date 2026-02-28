@@ -4,6 +4,7 @@ import com.ms.sw.config.customUtils.CurrentUser;
 import com.ms.sw.user.model.User;
 import com.ms.sw.user.service.ActivityLogsService;
 import com.ms.sw.views.dto.ActivityLogsListDto;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -18,6 +19,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("logs")
+@Slf4j
 public class AuditLogsController {
 
     private final ActivityLogsService activityLogsService;
@@ -35,6 +37,7 @@ public class AuditLogsController {
      */
     @GetMapping("/all")
     public ResponseEntity<List<ActivityLogsListDto>> getAll(@CurrentUser User user) {
+        log.info("GET /logs/all -> getAll -> user={}",user.getUsername());
 
         return ResponseEntity.ok(activityLogsService.getAllActivities(user.getUsername()));
     }

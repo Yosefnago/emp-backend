@@ -1,13 +1,13 @@
 package com.ms.sw.user.service;
 
-import com.ms.sw.exception.auth.UserNotFoundException;
+import com.ms.sw.exception.user.UserNotFoundException;
 import com.ms.sw.user.dto.PasswordUpdateRequest;
 import com.ms.sw.user.dto.PasswordUpdateResponse;
 import com.ms.sw.user.dto.UserProfileDto;
 import com.ms.sw.user.dto.UserRegisterRequest;
 import com.ms.sw.user.model.User;
-import com.ms.sw.exception.auth.EmailAlreadyExistsException;
-import com.ms.sw.exception.auth.UserAlreadyExistsException;
+import com.ms.sw.exception.user.EmailAlreadyExistsException;
+import com.ms.sw.exception.user.UserAlreadyExistsException;
 import com.ms.sw.user.repo.UserRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.security.crypto.password.PasswordEncoder;

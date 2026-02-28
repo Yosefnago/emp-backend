@@ -1,5 +1,6 @@
 package com.ms.sw.user.service;
 
+import com.ms.sw.exception.user.UserNotFoundException;
 import com.ms.sw.user.dto.ActivityLogsDto;
 import com.ms.sw.user.model.ActionType;
 import com.ms.sw.user.model.ActivityLogs;
@@ -35,7 +36,12 @@ public class ActivityLogsService {
      */
     public List<ActivityLogsDto> getLastActivity(String username) {
 
-       return activityLogsRepository.getLastActivityByUsername(username,PageRequest.of(0,3));
+        if(username == null || username.isEmpty()) {
+            throw new UserNotFoundException("Username not found.");
+        }
+
+        return activityLogsRepository
+                .getLastActivityByUsername(username,PageRequest.of(0,3));
     }
 
     /**
@@ -50,6 +56,7 @@ public class ActivityLogsService {
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void logAction(ActionType actionType, String affectedEmployee, String username) {
+
         try {
 
             ActivityLogs activityLogs = new ActivityLogs();
@@ -61,8 +68,8 @@ public class ActivityLogsService {
 
             activityLogsRepository.save(activityLogs);
 
-        } catch (Exception e) {
-            System.out.println(e.getMessage());
+        } catch (RuntimeException e) {
+            throw new RuntimeException(e.getMessage());
         }
     }
 

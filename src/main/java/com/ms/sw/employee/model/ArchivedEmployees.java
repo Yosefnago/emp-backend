@@ -1,6 +1,7 @@
 package com.ms.sw.employee.model;
 
 import com.ms.sw.user.model.Department;
+import com.ms.sw.user.model.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -78,4 +79,8 @@ public class ArchivedEmployees {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
     private Department department;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 }

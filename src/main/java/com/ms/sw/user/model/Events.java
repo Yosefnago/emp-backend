@@ -15,7 +15,7 @@ import java.time.LocalTime;
 public class Events {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "event_name")
@@ -40,7 +40,7 @@ public class Events {
     private Integer numberOfAttendance;
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
+    @JoinColumn(name = "user_id")
     private User user;
 
 }

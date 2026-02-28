@@ -23,7 +23,7 @@ public class AttendanceController {
     @PostMapping("/records")
     public ResponseEntity<List<AttendanceDto>> getAllAttendance(@CurrentUser User user, @RequestBody SearchQuery request) {
 
-        log.info("AttendanceController::getAllAttendance invoked by user {}", user.getUsername());
+        log.info("POST /attendance/records -> getAllAttendance -> user={}",user.getUsername());
         var year = request.year();
         var month = request.month();
         var department = request.department();
@@ -36,7 +36,7 @@ public class AttendanceController {
     @GetMapping("/employees")
     public ResponseEntity<List<EmployeeOptionDto>> loadEmployeesMap(@CurrentUser User user) {
 
-        log.info("AttendanceController::getAllEmployees invoked by user {}", user.getUsername());
+        log.info("GET /attendance/employees -> loadEmployeesMap -> user={}",user.getUsername());
         var list = attendanceService.getMapOfEmployees(user.getUsername());
         return ResponseEntity.ok().body(list);
     }
@@ -45,7 +45,8 @@ public class AttendanceController {
     public ResponseEntity<Void> updateAttendance(@CurrentUser User user,
                                                  @PathVariable String personalId ,
                                                  @RequestBody AttendanceDto attendanceDto) {
-        log.info("AttendanceController::updateAttendance invoked by user {}", user.getUsername());
+
+        log.info("PUT /attendance/{} -> updateAttendance -> user={}",personalId,user.getUsername());
 
         attendanceService.update(user.getUsername(),personalId,attendanceDto);
         return ResponseEntity.noContent().build();

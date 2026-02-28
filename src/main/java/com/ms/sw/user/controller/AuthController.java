@@ -66,6 +66,7 @@ public class AuthController {
      */
     @PostMapping("/login")
     public ResponseEntity<?> login (@RequestBody @Valid UserLoginRequest request, HttpServletResponse response){
+        log.info("POST /auth/login - user={}, ",request.username());
         return ResponseEntity.ok(authService.login(request, response));
     }
 
@@ -80,6 +81,7 @@ public class AuthController {
      */
     @PostMapping("register")
     public ResponseEntity<UserRegisterResponse> register(@RequestBody UserRegisterRequest request){
+        log.info("POST /auth/register - user={}, ",request.username());
         userService.register(request);
         return ResponseEntity.ok(new UserRegisterResponse(true,"User registered successfully"));
     }
@@ -94,6 +96,7 @@ public class AuthController {
      */
     @PostMapping("/refresh")
     public ResponseEntity<RefreshTokenResponse> refresh(HttpServletRequest request) {
+        log.info("POST /auth/refresh - user={}",request.getAuthType().toString());
         return ResponseEntity.ok(authService.refresh(request));
     }
     /**
@@ -107,6 +110,7 @@ public class AuthController {
      */
     @PostMapping("/logout")
     public ResponseEntity<?> logout(HttpServletResponse response) {
+        log.info("POST /auth/logout - user={}",response.getHeaderNames().toString());
         authService.logout(response);
         return ResponseEntity.ok(Map.of("message", "Logged out successfully"));
     }

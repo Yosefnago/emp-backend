@@ -37,7 +37,7 @@ public class SalaryController {
     @PostMapping("/payroll")
     @Transactional
     public ResponseEntity<Void> payroll(@CurrentUser User user, @RequestBody AttendanceSummaryRequest request){
-        log.info("SalaryController::calculateSalary for employee {} date {}-{}",request.employeeName(),request.year(),request.month());
+        log.info("POST /salary/payroll -> payroll -> user={}",user.getUsername());
 
         salaryService.fetchSalaryData(user,request);
         attendanceService.updateAttendanceToClosed(user,request);
@@ -50,7 +50,7 @@ public class SalaryController {
             @PathVariable int year,
             @PathVariable int month) {
 
-        log.info("SalaryController::getSalaryStats");
+        log.info("GET /salary/{}/{} -> getSalaryStats -> user={}",month,year,user.getUsername());
 
         SalaryStatsDto dto =
                 salaryStatsService.getSalaryStats(user, year, month);
@@ -59,7 +59,7 @@ public class SalaryController {
     }
     @GetMapping("/details/{personalId}")
     public ResponseEntity<SalaryDetailsDto> getSalaryDetailsById(@CurrentUser User user, @PathVariable String personalId) {
-        log.info("SalaryController::getSalaryDetailsById invoked by {}",user.getUsername());
+        log.info("GET /details/{} -> getSalaryDetailsById -> user={}",personalId,user.getUsername());
 
         var res = salaryStatsService.getSalaryDetails(user.getUsername(), personalId);
 
@@ -71,7 +71,7 @@ public class SalaryController {
             @RequestBody SalaryUpdateDetailsRequestDto requestDto,
             @PathVariable String personalId) {
 
-        log.info("SalaryController::updateSalaryDetails invoked by {}",user.getUsername());
+        log.info("PUT /update/{} -> updateSalaryDetails -> user={}",personalId,user.getUsername());
 
         salaryStatsService.updateSalaryDetails(user.getUsername(), personalId, requestDto);
 

@@ -4,11 +4,14 @@ import com.ms.sw.employee.model.Employees;
 import com.ms.sw.employee.repo.EmployeeRepository;
 import com.ms.sw.user.model.Events;
 import com.ms.sw.user.repo.EventsRepository;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.concurrent.StructuredTaskScope;
 
 /**
  * Service responsible for scheduling and sending automated notifications.
@@ -19,26 +22,47 @@ import java.util.List;
  * - Birthday reminders 7 days before</p>
  */
 @Service
+@Slf4j
 public class NotificationSchedulerService {
 
     private final EventsRepository eventsRepository;
-
     private final EmployeeRepository employeeRepository;
-
     private final NotificationService notificationService;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    public NotificationSchedulerService(EventsRepository eventsRepository, EmployeeRepository employeeRepository, NotificationService notificationService) {
+    public NotificationSchedulerService(EventsRepository eventsRepository,
+                                        EmployeeRepository employeeRepository,
+                                        NotificationService notificationService,
+                                        SimpMessagingTemplate messagingTemplate) {
         this.eventsRepository = eventsRepository;
         this.employeeRepository = employeeRepository;
         this.notificationService = notificationService;
+        this.messagingTemplate = messagingTemplate;
     }
+    @Scheduled(cron = "0 14 21 * * ?")
+    public void sendNotfications() {
+        log.info("Sending notifications");
 
+        try(var scope = StructuredTaskScope.open(StructuredTaskScope.Joiner.awaitAllSuccessfulOrThrow())){
+           scope.fork(this::sendUpcomingEventsNotification);
+           scope.fork(this::sendTodayEventNotifications);
+           scope.fork(this::sendBirthdayReminders);
+
+           scope.join();
+
+            messagingTemplate.convertAndSend("/topic/notifications-update", "REFRESH");
+            log.info("Batch process complete. Single refresh signal sent to WebSockets.");
+        }catch (RuntimeException e){
+            log.error("Failed to process notifications: {}", e.getMessage());
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
     /**
      * Sends notifications for events occurring within the next 3 days.
-     * Runs daily at 9:00 AM.
      */
-    @Scheduled(cron = "0 0 9 * * ?")
     public void sendUpcomingEventsNotification() {
+        log.info("Sending upcoming events notification");
         LocalDate today = LocalDate.now();
         LocalDate threeDaysFromNow = LocalDate.now().plusDays(3);
 
@@ -59,10 +83,9 @@ public class NotificationSchedulerService {
 
     /**
      * Sends notifications for events occurring today.
-     * Runs daily at 8:00 AM.
      */
-    @Scheduled(cron = "0 0 8 * * ?")
     public void sendTodayEventNotifications() {
+        log.info("Sending today events notification");
         LocalDate today = LocalDate.now();
 
         // Find events happening today
@@ -83,10 +106,9 @@ public class NotificationSchedulerService {
 
     /**
      * Sends birthday reminders for employees whose birthdays are within the next 7 days.
-     * Runs daily at 7:00 AM.
      */
-    @Scheduled(cron = "0 0 7 * * ?")
     public void sendBirthdayReminders() {
+        log.info("Sending birthday reminders notification");
         LocalDate today = LocalDate.now();
         LocalDate sevenDaysFromNow = today.plusDays(7);
 

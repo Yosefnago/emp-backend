@@ -3,6 +3,7 @@ package com.ms.sw.user.model;
 import com.ms.sw.employee.model.Employees;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.ToString;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -38,6 +39,11 @@ public class Department {
     private String departmentMail;
 
     @OneToMany(mappedBy = "department")
+    @ToString.Exclude
     private List<Employees> employeesList;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
 
 }

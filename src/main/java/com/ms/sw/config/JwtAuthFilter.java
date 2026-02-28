@@ -1,7 +1,7 @@
 package com.ms.sw.config;
 
-import com.ms.sw.exception.auth.jwt.JwtExpiredException;
-import com.ms.sw.exception.auth.jwt.JwtInvalidException;
+import com.ms.sw.exception.auth.JwtExpiredException;
+import com.ms.sw.exception.auth.JwtInvalidException;
 import com.ms.sw.user.model.User;
 import com.ms.sw.config.service.JwtService;
 import com.ms.sw.user.service.UserService;

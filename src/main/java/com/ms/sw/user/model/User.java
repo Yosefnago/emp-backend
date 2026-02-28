@@ -1,5 +1,6 @@
 package com.ms.sw.user.model;
 
+import com.ms.sw.employee.model.Employees;
 import com.ms.sw.notifications.model.Notifications;
 import jakarta.persistence.*;
 import lombok.*;
@@ -64,4 +65,10 @@ public  class User  {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private List<Notifications> notifications;
+
+    @OneToMany(mappedBy = "user")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private List<Department> departments;
+
 }

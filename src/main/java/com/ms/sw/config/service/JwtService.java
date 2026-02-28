@@ -1,7 +1,7 @@
 package com.ms.sw.config.service;
 
-import com.ms.sw.exception.auth.jwt.JwtExpiredException;
-import com.ms.sw.exception.auth.jwt.JwtInvalidException;
+import com.ms.sw.exception.auth.JwtExpiredException;
+import com.ms.sw.exception.auth.JwtInvalidException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SignatureException;

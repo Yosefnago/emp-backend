@@ -1,8 +1,8 @@
 package com.ms.sw.config;
 
 import com.ms.sw.config.service.JwtService;
-import com.ms.sw.exception.auth.jwt.JwtExpiredException;
-import com.ms.sw.exception.auth.jwt.JwtInvalidException;
+import com.ms.sw.exception.auth.JwtExpiredException;
+import com.ms.sw.exception.auth.JwtInvalidException;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.Message;

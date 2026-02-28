@@ -4,6 +4,7 @@ import com.ms.sw.config.customUtils.CurrentUser;
 import com.ms.sw.notifications.dto.NotificationResponse;
 import com.ms.sw.user.model.User;
 import com.ms.sw.notifications.service.NotificationService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,6 +18,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/notifications")
+@Slf4j
 public class NotificationController {
 
 
@@ -34,6 +36,7 @@ public class NotificationController {
      */
     @GetMapping
     public ResponseEntity<List<NotificationResponse>> getNotifications(@CurrentUser User user) {
+        log.info("GET /notifications/ -> getNotifications -> user={}",user.getUsername());
         List<NotificationResponse> notifications = notificationService.getUserNotifications(user.getUsername());
         return ResponseEntity.ok(notifications);
     }
@@ -46,6 +49,8 @@ public class NotificationController {
      */
     @GetMapping("/unread-count")
     public ResponseEntity<Integer> getUnreadCount(@CurrentUser User user) {
+        log.info("GET /notifications/count -> getUnreadCount -> user={}",user.getUsername());
+
         int count = notificationService.getUnreadCount(user.getUsername());
         return ResponseEntity.ok(count);
     }
@@ -59,6 +64,8 @@ public class NotificationController {
      */
     @PutMapping("/{id}/read")
     public ResponseEntity<Void> markAsRead(@CurrentUser User user, @PathVariable Long id) {
+        log.info("PUT /notifications/{}/read -> getUnreadCount -> user={}",id,user.getUsername());
+
         notificationService.markAsRead(id, user.getUsername());
         return ResponseEntity.ok().build();
     }
@@ -71,6 +78,8 @@ public class NotificationController {
      */
     @PutMapping("/mark-all-read")
     public ResponseEntity<Void> markAllAsRead(@CurrentUser User user) {
+        log.info("PUT /notifications/mark-all-read -> markAllAsRead -> user={}",user.getUsername());
+
         notificationService.markAllAsRead(user.getUsername());
         return ResponseEntity.ok().build();
     }
@@ -84,6 +93,8 @@ public class NotificationController {
      */
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteNotification(@CurrentUser User user, @PathVariable Long id) {
+        log.info("DELETE /notifications/{} -> deleteNotification -> user={}",id,user.getUsername());
+
         notificationService.deleteNotification(id, user.getUsername());
         return ResponseEntity.ok().build();
     }
@@ -96,6 +107,8 @@ public class NotificationController {
      */
     @DeleteMapping("/clear-all")
     public ResponseEntity<Void> clearAll(@CurrentUser User user) {
+        log.info("DELETE /notifications/clear-all -> clearAll -> user={}",user.getUsername());
+
         notificationService.clearAll(user.getUsername());
         return ResponseEntity.ok().build();
     }

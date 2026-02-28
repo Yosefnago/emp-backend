@@ -4,7 +4,7 @@ import com.ms.sw.employee.model.ArchivedEmployees;
 import com.ms.sw.employee.model.Employees;
 import com.ms.sw.employee.repo.ArchivedEmployeeRepository;
 import com.ms.sw.employee.repo.EmployeeRepository;
-import com.ms.sw.exception.employees.EmployeeNotFoundException;
+import com.ms.sw.exception.employee.EmployeeNotFoundException;
 import com.ms.sw.user.model.ActionType;
 import com.ms.sw.user.service.ActivityLogsService;
 import org.springframework.stereotype.Service;

@@ -13,7 +13,7 @@ public class SalaryDetails {
     private Long id;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "personal_id", referencedColumnName = "personal_id")
+    @JoinColumn(name = "employee_id")
     private Employees employee;
 
     @Column(name = "pension_fund")

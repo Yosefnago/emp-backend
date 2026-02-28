@@ -8,7 +8,7 @@ import com.ms.sw.employee.model.Employees;
 import com.ms.sw.employee.model.Salary;
 import com.ms.sw.employee.repo.SalaryDetailsRepository;
 import com.ms.sw.employee.repo.SalaryRepository;
-import com.ms.sw.exception.employees.EmployeeNotFoundException;
+import com.ms.sw.exception.employee.EmployeeNotFoundException;
 import com.ms.sw.user.model.ActionType;
 import com.ms.sw.user.model.User;
 import com.ms.sw.user.service.ActivityLogsService;

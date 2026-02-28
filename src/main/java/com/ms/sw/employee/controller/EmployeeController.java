@@ -45,7 +45,7 @@ public class EmployeeController {
     @GetMapping()
     public ResponseEntity<List<EmployeeListResponse>> getAllEmployees(@CurrentUser User user) {
 
-        log.info("EmployeesController::getAllEmployees invoked by user '{}'", user.getUsername());
+        log.info("GET /employees/ -> getAllEmployees -> user={}",user.getUsername());
         List<EmployeeListResponse> employees = employeesService.getAllEmployees(user.getUsername());
         return ResponseEntity.ok(employees);
     }
@@ -60,7 +60,7 @@ public class EmployeeController {
     @GetMapping("/{personalId}")
     public ResponseEntity<EmployeeDetailsResponse> getEmployeeById(@CurrentUser User user, @PathVariable String personalId) {
 
-        log.info("EmployeesController::getEmployeeById invoked by user '{}' for personalId '{}'", user.getUsername(), personalId);
+        log.info("GET /employees/{} -> getEmployeeById -> user={}",personalId,user.getUsername());
 
         EmployeeDetailsResponse fullDetails = employeesService.getEmployeeByPersonalId(personalId, user.getUsername());
 
@@ -77,7 +77,7 @@ public class EmployeeController {
     @PostMapping("/add")
     public ResponseEntity<AddEmployeeResponse> addEmployee(@CurrentUser User user, @RequestBody @Valid AddEmployeeRequest addEmployeeRequest) {
 
-        log.info("EmployeesController::addEmployee invoked by user '{}'", user.getUsername());
+        log.info("POST /employees/add -> addEmployee -> user={}",user.getUsername());
 
         employeesService.addEmployee(addEmployeeRequest,user);
         return ResponseEntity.ok(new AddEmployeeResponse("Employee added successfully"));
@@ -97,7 +97,7 @@ public class EmployeeController {
             @RequestBody @Valid UpdateEmployeeDetailsRequest updateEmployeeDetailsRequest,
             @PathVariable String personalId) {
 
-        log.info("EmployeesController::updateEmployeeDetails invoked by user '{}'", user.getUsername());
+        log.info("PUT /employees/{} -> updateEmployeeDetails -> user={}",personalId,user.getUsername());
 
         employeesService.updateEmployeeDetails(updateEmployeeDetailsRequest,user.getUsername(),personalId);
         return ResponseEntity.ok(new UpdateEmployeeDetailsResponse("Employee details updated"));
@@ -113,23 +113,10 @@ public class EmployeeController {
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEmployee(@CurrentUser User user, @PathVariable String id) {
 
-        log.info("EmployeesController::archiveEmployee invoked by user '{}' for personalId '{}'", user.getUsername(), id);
+        log.info("DELETE /employees/{} -> deleteEmployee -> user={}",id,user.getUsername());
 
         archivedEmployeeService.archiveEmployee(id, user.getUsername());
         return ResponseEntity.ok().build();
     }
 
-    /**
-     * Test endpoint to verify authentication of the current user.
-     *
-     * @param user the current authenticated user
-     * @return map with the authenticated username
-     */
-    @GetMapping("/test")
-    public ResponseEntity<?> testAuth(@CurrentUser User user) {
-
-        log.info("EmployeesController::testAuth invoked by user '{}'", user.getUsername());
-
-        return ResponseEntity.ok(Map.of("authenticatedUser", user.getUsername()));
-    }
 }

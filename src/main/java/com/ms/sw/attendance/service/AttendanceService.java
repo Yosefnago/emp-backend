@@ -70,6 +70,7 @@ public class AttendanceService {
         );
     }
     public void updateAttendanceToClosed(User user, AttendanceSummaryRequest request) {
+
         attendanceRepository
                 .updateAttendanceToClose(
                         user.getUsername(),

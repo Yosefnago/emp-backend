@@ -1,8 +1,7 @@
 package com.ms.sw.user.service;
 
 import com.ms.sw.config.service.JwtService;
-import com.ms.sw.exception.auth.InvalidCredentialsException;
-import com.ms.sw.exception.auth.jwt.JwtInvalidException;
+import com.ms.sw.exception.auth.JwtInvalidException;
 import com.ms.sw.user.dto.RefreshTokenResponse;
 import com.ms.sw.user.dto.UserLoginRequest;
 import com.ms.sw.user.dto.UserLoginResponse;

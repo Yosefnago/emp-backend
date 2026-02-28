@@ -28,7 +28,7 @@ public class Notifications {
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_username", referencedColumnName = "username")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @PrePersist

@@ -49,8 +49,7 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
 
     @Query("""
         select new com.ms.sw.employee.dto.EmployeeDetailsResponse(
-           e.firstName,
-           e.lastName,
+           e.firstName,e.lastName,
            e.personalId,
            e.email,
            e.gender,
@@ -66,9 +65,10 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
            e.jobType,
            e.status,
            e.statusAttendance,
-           e.updatedAt                                                   
+           e.updatedAt                                                     
            )
-        from Employees e    
+        from Employees e  
+        where e.personalId = :personalId and e.user.username = :username   
    """)
     Optional<EmployeeDetailsResponse> findByPersonalIdAndOwner(@Param("personalId") String personalId,
                                                                @Param("username") String username);

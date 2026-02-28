@@ -7,7 +7,6 @@ import com.ms.sw.user.dto.UserProfileDto;
 import com.ms.sw.user.model.User;
 import com.ms.sw.user.service.UserService;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +15,7 @@ import org.springframework.web.bind.annotation.*;
 @Slf4j
 public class UserController {
 
-    private UserService userService;
+    private final UserService userService;
 
     public UserController(UserService userService) {
         this.userService = userService;
@@ -25,25 +24,24 @@ public class UserController {
     // GET CURRENT USER INFO DETAILS
     @GetMapping
     public ResponseEntity<UserProfileDto> getUser(@CurrentUser User user) {
-      log.info("getUser " );
+        log.info("GET /user/ -> getUser -> user={}", user.getUsername());
 
-      var res = userService.getUserProfileDto(user.getUsername());
+        var res = userService.getUserProfileDto(user.getUsername());
 
-      System.out.println("Res "+ res);
       return ResponseEntity.ok(res);
     }
 
     //UPDATE USER PROFILE
     @PutMapping
     public ResponseEntity<Void> updateUserProfileData(@CurrentUser User user,@RequestBody UserProfileDto userProfileDto) {
-        log.info("UserController::updateUserProfileData invoked by -> {}", user.getUsername());
+        log.info("PUT /user/ -> updateUserProfileData -> user={}", user.getUsername());
 
         userService.updateUserInfo(user.getUsername(), userProfileDto);
         return ResponseEntity.ok().build();
     }
     @PostMapping("/security")
     public ResponseEntity<PasswordUpdateResponse> passwordUpdate(@CurrentUser User user, @RequestBody PasswordUpdateRequest req){
-        log.info("UserController::passwordUpdate invoked by -> {}", user.getUsername());
+        log.info("POST /user/security -> passwordUpdate -> user={}", user.getUsername());
         var response = userService.changePassword(user.getUsername(),req);
 
         return ResponseEntity.ok(response);

@@ -20,9 +20,12 @@ public class ActivityLogs {
     @EqualsAndHashCode.Include
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private User user;
+
     @Column(name = "from_user")
     private String fromUser;
-
 
     @Enumerated(EnumType.STRING)
     @Column(name = "action")

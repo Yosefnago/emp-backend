@@ -43,7 +43,7 @@ public class DashboardController {
     @GetMapping("/stats")
     public ResponseEntity<DashboardStatsResponse> getDashboardStats(@CurrentUser User user){
 
-        log.info("Get Dashboard Stats invoked by user '{}'", user.getUsername());
+        log.info("GET /dashboard/stats -> getDashboardStats -> user={}",user.getUsername());
         return ResponseEntity.ok(dashboardService.loadDashboardData(user.getUsername()));
     }
 
@@ -57,7 +57,7 @@ public class DashboardController {
     @GetMapping("/activity")
     public ResponseEntity<List<ActivityLogsDto>> getLastActivity(@CurrentUser User user){
 
-        log.info("Get Activity Logs invoked by user '{}'", user.getUsername());
+        log.info("GET /dashboard/activity -> getLastActivity -> user={}",user.getUsername());
         return ResponseEntity.ok(activityLogsService.getLastActivity(user.getUsername()));
     }
 

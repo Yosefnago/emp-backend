@@ -16,7 +16,7 @@ public class Salary {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "personal_id", referencedColumnName = "personal_id")
+    @JoinColumn(name = "employee_id")
     private Employees employee;
 
     @Column(name = "salary_amount")

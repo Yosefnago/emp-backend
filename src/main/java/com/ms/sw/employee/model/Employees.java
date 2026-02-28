@@ -7,6 +7,8 @@ import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+
 import java.time.LocalDate;
 
 @Entity
@@ -72,12 +74,14 @@ public class Employees {
     private String statusAttendance;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_username", referencedColumnName = "username")
+    @JoinColumn(name = "user_id")
     @JsonIgnore
+    @ToString.Exclude
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "department_id")
+    @ToString.Exclude
     private Department department;
 
 }
