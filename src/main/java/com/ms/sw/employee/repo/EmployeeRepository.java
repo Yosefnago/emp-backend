@@ -23,7 +23,8 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
                 e.email,
                 e.phoneNumber,
                 e.department.departmentName,
-                e.address
+                e.address,
+                e.status
             )
         from Employees e
         where e.user.username =:username

@@ -33,6 +33,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
            from Attendance a
            join a.employee e
            where e.user.username = :username
+           and e.status = 'ACTIVE'
            and a.date >= :startDate
            and a.date < :endDate
            and ( :department = '' or e.department.departmentName = :department )
@@ -54,6 +55,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
             )
             from Employees e
             where e.user.username = :username
+            and e.status = 'ACTIVE'
            """)
     List<EmployeeOptionDto> loadMapOfEmployees(@Param("username") String username);
 
@@ -90,6 +92,7 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
     FROM Attendance a
     WHERE a.employee.user.username = :username
       AND a.employee.personalId = :personalId
+      and a.employee.status = 'ACTIVE'
       AND YEAR(a.date) = :year
       AND MONTH(a.date) = :month
     """)
@@ -118,11 +121,11 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
     );
 
     @Query("""
-        SELECT a FROM Attendance a 
-        WHERE a.employee.personalId = :personalId 
-        AND a.employee.user.username = :username   
-        AND EXTRACT(MONTH FROM a.date) = :month 
-        AND EXTRACT(YEAR FROM a.date) = :year 
+        SELECT a FROM Attendance a
+        WHERE a.employee.personalId = :personalId
+        AND a.employee.user.username = :username
+        AND EXTRACT(MONTH FROM a.date) = :month
+        AND EXTRACT(YEAR FROM a.date) = :year
         AND a.date <= CURRENT_DATE
     """)
     List<Attendance> findCurrentMonthAttendanceUpToToday(
@@ -131,4 +134,8 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
             @Param("month") int month,
             @Param("year") int year
     );
+
+    @Modifying
+    @Query("DELETE FROM Attendance a WHERE a.employee.id = :employeeId")
+    void deleteByEmployeeId(@Param("employeeId") Long employeeId);
 }

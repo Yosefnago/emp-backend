@@ -79,10 +79,10 @@ public class AttendanceService {
     public AttendanceStatsDto getCurrentMonthStats(String username ,String personalId) {
         LocalDate today = LocalDate.now();
 
-        List<Attendance> monthRecords = attendanceRepository.findCurrentMonthAttendanceUpToToday(username,
-                personalId, today.getMonthValue(), today.getYear());
+        List<Attendance> monthRecords = attendanceRepository
+                .findCurrentMonthAttendanceUpToToday(username,personalId, today.getMonthValue(), today.getYear());
 
-        long present = 0, sick = 0, vacation = 0, absent = 0;
+        long present = 0, sick = 0, vacation = 0;
 
         for (Attendance a : monthRecords) {
             if (a.getStatus() == null) continue;

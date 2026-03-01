@@ -26,5 +26,6 @@ public record EmployeeListResponse(
         String email,
         String phoneNumber,
         String department,
-        String address
+        String address,
+        String status
 ) {}
