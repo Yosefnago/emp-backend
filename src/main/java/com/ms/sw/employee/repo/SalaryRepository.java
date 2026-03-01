@@ -25,4 +25,7 @@ public interface SalaryRepository extends JpaRepository<Salary, Long> {
     """)
     List<SalaryStatsDto> getSalaryStats(@Param("username") String username, int year, int month);
 
+    @Query("SELECT s FROM Salary s WHERE s.employee.personalId = :personalId AND s.salaryYear = :year AND (:month = 0 OR s.salaryMonth = :month)")
+    List<Salary> searchSalariesForView(@Param("personalId") String personalId, @Param("year") int year, @Param("month") int month);
+
 }

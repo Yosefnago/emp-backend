@@ -95,9 +95,10 @@ public class AuthController {
      * @return response containing a newly generated access token
      */
     @PostMapping("/refresh")
-    public ResponseEntity<RefreshTokenResponse> refresh(HttpServletRequest request) {
-        log.info("POST /auth/refresh - user={}",request.getAuthType().toString());
-        return ResponseEntity.ok(authService.refresh(request));
+    public ResponseEntity<RefreshTokenResponse> refresh(HttpServletRequest request, HttpServletResponse response) {
+        log.info("POST /auth/refresh");
+
+        return ResponseEntity.ok(authService.refresh(request, response));
     }
     /**
      * Logs out the currently authenticated user.

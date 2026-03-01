@@ -1,6 +1,5 @@
 package com.ms.sw.user.service;
 
-import com.ms.sw.exception.department.DepartmentException;
 import com.ms.sw.user.dto.DepartmentDetailsDto;
 import com.ms.sw.user.dto.EmployeeSummaryDto;
 import com.ms.sw.user.model.Department;
@@ -21,7 +20,7 @@ public class DepartmentService {
     public DepartmentDetailsDto getDepartmentDetails(String username,String departmentName){
 
         Department d = departmentRepository.findDepartmentWithEmployees(username,departmentName)
-                .orElseThrow(()->new DepartmentException("Department with username " + username + " does not exist"));
+                .orElseThrow(()->new RuntimeException("Department with username " + username + " does not exist"));
 
         List<EmployeeSummaryDto> employeeDtos =
                 d.getEmployeesList().stream()

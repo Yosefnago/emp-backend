@@ -79,16 +79,15 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     /**
-     * Extracts the JWT token from the "Authorization" header.
-     *
-     * @param request HTTP request
-     * @return the JWT token string, or {@code null} if not present
+     * Extracts the JWT token from the "jwt" cookie.
      */
     public String extractJwtFromRequest(HttpServletRequest request) {
-        final String authHeader = request.getHeader("Authorization");
-
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            return authHeader.substring(7);
+        if (request.getCookies() != null) {
+            for (jakarta.servlet.http.Cookie cookie : request.getCookies()) {
+                if ("jwt".equals(cookie.getName())) {
+                    return cookie.getValue();
+                }
+            }
         }
         return null;
     }

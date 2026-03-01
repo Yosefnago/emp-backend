@@ -10,6 +10,7 @@ public class NotificationMessages {
     // Birthday notifications
     public static final String BIRTHDAY_REMINDER = "יום הולדת לעובד/ת %s מגיע ב-%s";
 
+    public static final String PAYROLL_NOTIFY = "נוצר תלוש שכר לעובד %s";
     private NotificationMessages() {
         // Prevent instantiation
     }

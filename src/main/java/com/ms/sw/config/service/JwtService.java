@@ -49,16 +49,16 @@ public class JwtService {
 
         }catch (ExpiredJwtException e){
             log.warn("Attempt to parse token expired exception");
-            throw new JwtExpiredException("Token has expired",e);
+            throw new JwtExpiredException("Token has expired");
         }catch (SignatureException e){
             log.warn("Invalid JWT signature: {}", e.getMessage());
-            throw new JwtInvalidException("Invalid Token signature",e);
+            throw new JwtInvalidException("Invalid Token signature");
         }catch (MalformedJwtException e){
             log.warn("Malformed JWT token: {}", e.getMessage());
-            throw new JwtInvalidException("Malformed token structure",e);
+            throw new JwtInvalidException("Malformed token structure");
         }catch (Exception e){
             log.error("Unexpected error during token validation: {}", e.getMessage());
-            throw new JwtInvalidException("Token validation failed", e);
+            throw new JwtInvalidException("Token validation failed");
         }
     }
 
@@ -91,11 +91,11 @@ public class JwtService {
         } catch (ExpiredJwtException e) {
 
             log.warn("Token validation detected expired token via JWT library");
-            throw new JwtExpiredException("Token has expired", e);
+            throw new JwtExpiredException("Token has expired");
 
         } catch (Exception e) {
             log.error("Error validating token expiration: {}", e.getMessage());
-            throw new JwtInvalidException("Unable to validate token expiration", e);
+            throw new JwtInvalidException("Unable to validate token expiration");
         }
     }
 
@@ -140,9 +140,10 @@ public class JwtService {
      * Generates a short-lived access token.
      *
      * @param username user identifier
+     * @param role user role (e.g., "ADMIN", "USER")
      * @return signed JWT access token
      */
-    public String generateAccessToken(String username){
+    public String generateAccessToken(String username, String role){
 
         long now = System.currentTimeMillis();
         Date issuedAt = new Date(now);
@@ -150,12 +151,13 @@ public class JwtService {
 
         String token = Jwts.builder()
                 .setSubject(username)
+                .claim("role", role)
                 .setIssuedAt(issuedAt)
                 .setExpiration(expiration)
                 .signWith(secretKey)
                 .compact();
 
-        log.info("Generated access token for user: {} (expires in 15 minutes)", username);
+        log.info("Generated access token for user: {} with role: {} (expires in 15 minutes)", username, role);
         return token;
     }
 
@@ -163,9 +165,10 @@ public class JwtService {
      * Generates a long-lived refresh token.
      *
      * @param username user identifier
+     * @param role user role
      * @return signed JWT refresh token
      */
-    public String generateRefreshToken(String username) {
+    public String generateRefreshToken(String username, String role) {
 
         long now = System.currentTimeMillis();
         Date issuedAt = new Date(now);
@@ -173,6 +176,7 @@ public class JwtService {
 
         String token = Jwts.builder()
                 .setSubject(username)
+                .claim("role", role)
                 .setIssuedAt(issuedAt)
                 .setExpiration(expiration)
                 .claim("type", "refresh")
@@ -200,5 +204,14 @@ public class JwtService {
             log.error("Error checking if token is refresh token: {}", e.getMessage());
             return false;
         }
+    }
+    /**
+     * Extracts the user role from a JWT.
+     *
+     * @param token JWT token
+     * @return the role stored in the token
+     */
+    public String extractRole(String token) {
+        return extractClaim(token, claims -> claims.get("role", String.class));
     }
 }

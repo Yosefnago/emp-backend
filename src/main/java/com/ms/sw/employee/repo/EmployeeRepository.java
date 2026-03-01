@@ -23,10 +23,10 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
                 e.email,
                 e.phoneNumber,
                 e.department.departmentName,
-                e.address                    
+                e.address
             )
-        from Employees e  
-        where e.user.username =:username       
+        from Employees e
+        where e.user.username =:username
     """)
     List<EmployeeListResponse> getAllEmployeesByOwner(@Param("username") String username);
 
@@ -65,10 +65,10 @@ public interface EmployeeRepository extends JpaRepository<Employees, Long> {
            e.jobType,
            e.status,
            e.statusAttendance,
-           e.updatedAt                                                     
+           e.updatedAt
            )
-        from Employees e  
-        where e.personalId = :personalId and e.user.username = :username   
+        from Employees e
+        where e.personalId = :personalId and e.user.username = :username
    """)
     Optional<EmployeeDetailsResponse> findByPersonalIdAndOwner(@Param("personalId") String personalId,
                                                                @Param("username") String username);

@@ -7,6 +7,8 @@ import com.ms.sw.notifications.repo.NotificationRepository;
 import com.ms.sw.notifications.util.NotificationMessages;
 import com.ms.sw.notifications.util.NotificationType;
 import jakarta.transaction.Transactional;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -19,12 +21,15 @@ import java.util.List;
  * Supports event reminders, today's events, and birthday reminders.</p>
  */
 @Service
+@Slf4j
 public class NotificationService {
 
     private final NotificationRepository notificationRepository;
+    private final SimpMessagingTemplate messagingTemplate;
 
-    public NotificationService(NotificationRepository notificationRepository) {
+    public NotificationService(NotificationRepository notificationRepository, SimpMessagingTemplate messagingTemplate) {
         this.notificationRepository = notificationRepository;
+        this.messagingTemplate = messagingTemplate;
     }
 
     /**
@@ -43,6 +48,8 @@ public class NotificationService {
         notification.setCreatedAt(LocalDateTime.now());
 
         notificationRepository.save(notification);
+        log.info("New notification saved for user {}. Sending REFRESH via WebSocket", user.getUsername());
+        messagingTemplate.convertAndSend("/topic/notifications-update", "REFRESH");
     }
 
     /**
@@ -93,6 +100,13 @@ public class NotificationService {
                 birthDate
         );
         createNotification(user, message, NotificationType.BIRTHDAY_REMINDER);
+    }
+    public void createNotaficationPayroll(User user, String employeeName) {
+        String message = String.format(
+                NotificationMessages.PAYROLL_NOTIFY,
+                employeeName
+        );
+        createNotification(user,message,NotificationType.PAYROLL);
     }
 
     /**

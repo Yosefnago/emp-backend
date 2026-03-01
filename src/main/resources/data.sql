@@ -152,9 +152,9 @@ FROM
     generate_series('2024-01-01'::date, '2026-12-31'::date, '1 day'::interval) AS day_series(date)
         CROSS JOIN LATERAL (
         SELECT CASE
-                   WHEN random() < 0.85 THEN 'PRESENT'
-                   WHEN random() < 0.50 THEN 'SICK'
-                   ELSE 'VACATION'
+                   WHEN random() < 0.05 THEN 'VACATION'
+                   WHEN random() < 0.05 THEN 'SICK'
+                   ELSE 'PRESENT'
                    END as current_status
         ) s
 WHERE
@@ -163,7 +163,6 @@ WHERE
 
 --Script for Generating Events (Upcoming and Past)
 INSERT INTO events (
-    id,
     event_name,
     event_date,
     event_time,
@@ -174,10 +173,10 @@ INSERT INTO events (
     user_id
 )
 VALUES
-(1,'ישיבת צוות פיתוח - Sprint Planning', CURRENT_DATE + INTERVAL '1 day', '10:00:00', 'HIGH', 'תכנון משימות לשבועיים הקרובים וסקירת באגים קריטיים.', 'חדר ישיבות קומה 2', 12, 1),
-(2,'Happy Hour - הרמת כוסית', CURRENT_DATE + INTERVAL '3 days', '16:00:00', 'LOW', 'כיבוד ושתייה בלובי המשרד לכל עובדי החברה.', 'לובי מרכזי', 49, 1),
-(3,'הדרכת אבטחת מידע שנתית', CURRENT_DATE + INTERVAL '5 days', '09:00:00', 'MEDIUM', 'חובת השתתפות לכל העובדים - ריענון נהלי סייבר.', 'אולם הרצאות', 25, 1),
+('ישיבת צוות פיתוח - Sprint Planning', CURRENT_DATE + INTERVAL '1 day', '10:00:00', 'HIGH', 'תכנון משימות לשבועיים הקרובים וסקירת באגים קריטיים.', 'חדר ישיבות קומה 2', 12, 1),
+('Happy Hour - הרמת כוסית', CURRENT_DATE + INTERVAL '3 days', '16:00:00', 'LOW', 'כיבוד ושתייה בלובי המשרד לכל עובדי החברה.', 'לובי מרכזי', 49, 1),
+('הדרכת אבטחת מידע שנתית', CURRENT_DATE + INTERVAL '5 days', '09:00:00', 'MEDIUM', 'חובת השתתפות לכל העובדים - ריענון נהלי סייבר.', 'אולם הרצאות', 25, 1),
 
-(4,'ראיון עבודה - מפתח Fullstack', CURRENT_DATE - INTERVAL '2 days', '11:30:00', 'MEDIUM', 'ראיון מקצועי למועמד חדש עבור צוות התשתיות.', 'חדר ראיונות 1', 2, 1),
-(5,'ישיבת הנהלה רבעונית', CURRENT_DATE - INTERVAL '10 days', '14:00:00', 'HIGH', 'סקירת ביצועים כספיים לרבעון הקודם ואישור תקציבים.', 'חדר דירקטוריון', 8, 1),
-(6,'סדנת ניהול זמן', CURRENT_DATE - INTERVAL '20 days', '09:00:00', 'LOW', 'סדנה מעשית לשיפור פריון העבודה בקרב מנהלי צוותים.', 'חדר הדרכה', 15, 1);
+('ראיון עבודה - מפתח Fullstack', CURRENT_DATE - INTERVAL '2 days', '11:30:00', 'MEDIUM', 'ראיון מקצועי למועמד חדש עבור צוות התשתיות.', 'חדר ראיונות 1', 2, 1),
+('ישיבת הנהלה רבעונית', CURRENT_DATE - INTERVAL '10 days', '14:00:00', 'HIGH', 'סקירת ביצועים כספיים לרבעון הקודם ואישור תקציבים.', 'חדר דירקטוריון', 8, 1),
+('סדנת ניהול זמן', CURRENT_DATE - INTERVAL '20 days', '09:00:00', 'LOW', 'סדנה מעשית לשיפור פריון העבודה בקרב מנהלי צוותים.', 'חדר הדרכה', 15, 1);

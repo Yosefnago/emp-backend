@@ -9,6 +9,7 @@ import com.ms.sw.employee.model.Salary;
 import com.ms.sw.employee.repo.SalaryDetailsRepository;
 import com.ms.sw.employee.repo.SalaryRepository;
 import com.ms.sw.exception.employee.EmployeeNotFoundException;
+import com.ms.sw.notifications.service.NotificationService;
 import com.ms.sw.user.model.ActionType;
 import com.ms.sw.user.model.User;
 import com.ms.sw.user.service.ActivityLogsService;
@@ -39,6 +40,7 @@ public class SalaryService {
     private final SalaryRepository salaryRepository;
     private final PdfGeneratorService pdfGenerator;
     private final ActivityLogsService activityLogsService;
+    private final NotificationService notificationService;
 
     /**
      * Fetches salary data and calculates payroll.
@@ -99,9 +101,8 @@ public class SalaryService {
 
         String pdfPath = pdfGenerator.generateSalaryPdf(pdfData);
         saveSalaryRecord(user.getUsername(), employee.personalId(), pdfData, netSalary, pdfPath);
+        notificationService.createNotaficationPayroll(user, employee.employeeName());
 
-        // log to be removed later. by adding time schedular for generating tlush.
-        activityLogsService.logAction(ActionType.GENERATED_PAYROLL,"לעובד "+employee.employeeName(),user.getUsername());
         log.info("Salary generated for {} ({})", employee.employeeName(), employee.personalId());
     }
 

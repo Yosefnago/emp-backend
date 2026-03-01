@@ -39,7 +39,7 @@ public class NotificationSchedulerService {
         this.notificationService = notificationService;
         this.messagingTemplate = messagingTemplate;
     }
-    @Scheduled(cron = "0 14 21 * * ?")
+    @Scheduled(cron = "0 0 7 * * ?")
     public void sendNotfications() {
         log.info("Sending notifications");
 

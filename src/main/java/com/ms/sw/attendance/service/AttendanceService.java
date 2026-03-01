@@ -1,9 +1,7 @@
 package com.ms.sw.attendance.service;
 
-import com.ms.sw.attendance.dto.AttendanceDto;
-import com.ms.sw.attendance.dto.AttendancePayrollDto;
-import com.ms.sw.attendance.dto.AttendanceSummaryRequest;
-import com.ms.sw.attendance.dto.EmployeeOptionDto;
+import com.ms.sw.attendance.dto.*;
+import com.ms.sw.attendance.model.Attendance;
 import com.ms.sw.attendance.repo.AttendanceRepository;
 import com.ms.sw.user.model.User;
 import jakarta.transaction.Transactional;
@@ -77,6 +75,33 @@ public class AttendanceService {
                         request.personalId(),
                         Integer.parseInt(request.year()),
                         Integer.parseInt(request.month()));
+    }
+    public AttendanceStatsDto getCurrentMonthStats(String username ,String personalId) {
+        LocalDate today = LocalDate.now();
+
+        List<Attendance> monthRecords = attendanceRepository.findCurrentMonthAttendanceUpToToday(username,
+                personalId, today.getMonthValue(), today.getYear());
+
+        long present = 0, sick = 0, vacation = 0, absent = 0;
+
+        for (Attendance a : monthRecords) {
+            if (a.getStatus() == null) continue;
+
+            switch (a.getStatus().toUpperCase()) {
+                case "PRESENT" -> present++;
+                case "SICK" -> sick++;
+                case "VACATION" -> vacation++;
+            }
+        }
+
+        long possibleWorkingDays = monthRecords.size();
+
+        double rate = 0.0;
+        if (possibleWorkingDays > 0) {
+            rate = ((double) present / possibleWorkingDays) * 100.0;
+        }
+
+        return new AttendanceStatsDto(present, sick, vacation, Math.round(rate));
     }
 
 }

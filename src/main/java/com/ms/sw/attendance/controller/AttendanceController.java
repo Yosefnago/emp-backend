@@ -51,6 +51,15 @@ public class AttendanceController {
         attendanceService.update(user.getUsername(),personalId,attendanceDto);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/stats/current-month/{personalId}")
+    public ResponseEntity<AttendanceStatsDto> getCurrentMonthStats(
+            @CurrentUser User user,
+            @PathVariable String personalId) {
+
+        log.info("Fetching current month stats for employee: {}", personalId);
+        AttendanceStatsDto stats = attendanceService.getCurrentMonthStats(user.getUsername(),personalId);
+        return ResponseEntity.ok(stats);
+    }
 }
 
 

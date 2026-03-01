@@ -5,10 +5,14 @@ import com.ms.sw.exception.auth.JwtInvalidException;
 import com.ms.sw.user.dto.RefreshTokenResponse;
 import com.ms.sw.user.dto.UserLoginRequest;
 import com.ms.sw.user.dto.UserLoginResponse;
+import com.ms.sw.user.model.User;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.ResponseCookie;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -68,22 +72,26 @@ public class AuthService {
 
         log.info("Login attempt for user: {}", request.username());
 
-        boolean isValid = userService.getUser(request.username())
-                .map(user-> passwordEncoder.matches(request.password(), user.getPassword()))
-                .orElse(false);
+        User user = userService.getUser(request.username()).orElseThrow(()-> new UsernameNotFoundException("User not found"));
 
-        if (!isValid){
-            log.warn("Login failed: Invalid credentials for username: {}", request.username());
-            return new UserLoginResponse(null, null);
-        }
-
-        String accessToken = jwtService.generateAccessToken(request.username());
-        String refreshToken = jwtService.generateRefreshToken(request.username());
+        String accessToken = jwtService.generateAccessToken(user.getUsername(), user.getRole());
+        String refreshToken = jwtService.generateRefreshToken(user.getUsername(), user.getRole());
 
         setRefreshTokenCookie(response, refreshToken);
+
+        ResponseCookie cookie = ResponseCookie.from("jwt",accessToken)
+                        .httpOnly(true)
+                        .secure(false)
+                        .path("/")
+                        .maxAge(15 * 60)
+                        .sameSite("strict")
+                        .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
         log.info("Login success for user: {}", request.username());
 
-        return new UserLoginResponse(accessToken, request.username());
+        return new UserLoginResponse( request.username(),jwtService.extractRole(accessToken));
     }
 
     /**
@@ -93,7 +101,7 @@ public class AuthService {
      * @return {@link RefreshTokenResponse} containing a newly generated access token
      * @throws  JwtInvalidException if the refresh token is missing or invalid
      */
-    public RefreshTokenResponse refresh(HttpServletRequest request) {
+    public RefreshTokenResponse refresh(HttpServletRequest request, HttpServletResponse response) {
         String refreshToken = extractRefreshToken(request);
 
         if (refreshToken == null) {
@@ -107,9 +115,19 @@ public class AuthService {
         }
 
         String username = jwtService.extractUsername(refreshToken);
-        String newAccessToken = jwtService.generateAccessToken(username);
+        String newAccessToken = jwtService.generateAccessToken(username, jwtService.extractRole(refreshToken));
 
-        return new RefreshTokenResponse(newAccessToken);
+        ResponseCookie cookie = ResponseCookie.from("jwt", newAccessToken)
+                .httpOnly(true)
+                .secure(false)
+                .path("/")
+                .maxAge(15 * 60)
+                .sameSite("strict")
+                .build();
+
+        response.addHeader(HttpHeaders.SET_COOKIE, cookie.toString());
+
+        return new RefreshTokenResponse(null);
     }
 
     /**

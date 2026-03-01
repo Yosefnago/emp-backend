@@ -1,8 +1,10 @@
 package com.ms.sw.employee.service;
 
 import com.ms.sw.employee.dto.SalaryDetailsDto;
+import com.ms.sw.employee.dto.SalarySlipDto;
 import com.ms.sw.employee.dto.SalaryStatsDto;
 import com.ms.sw.employee.dto.SalaryUpdateDetailsRequestDto;
+import com.ms.sw.employee.model.Salary;
 import com.ms.sw.employee.repo.SalaryDetailsRepository;
 import com.ms.sw.employee.repo.SalaryRepository;
 import com.ms.sw.user.model.User;
@@ -11,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -44,10 +47,6 @@ public class SalaryStatsService {
                 .mapToDouble(dto -> dto.maxSalary() != null ? dto.maxSalary() : 0.0)
                 .max()
                 .orElse(0.0);
-
-        System.out.println("Total salary: " + total);
-        System.out.println("Avg salary: " + avg);
-        System.out.println("Max salary: " + max);
 
         return new SalaryStatsDto(total,avg,max);
     }
@@ -85,6 +84,16 @@ public class SalaryStatsService {
                 requestDto.totalVacationDays()
         );
     }
+    public List<SalarySlipDto> searchSalarySlips(String personalId, int year, int month) {
+        log.info("Searching salary slips for: {}, year: {}, month: {}", personalId, year, month);
+        List<Salary> salaries = salaryRepository.searchSalariesForView(personalId, year, month);
 
+        return salaries.stream()
+                .map(s -> new SalarySlipDto(s.getId(), s.getSalaryYear(), s.getSalaryMonth(), s.getSalaryAmount()))
+                .collect(Collectors.toList());
+    }
+    public Salary getSalaryById(Long id) {
+        return salaryRepository.findById(id).orElseThrow(() -> new RuntimeException("Salary record not found for ID: " + id));
+    }
 
 }

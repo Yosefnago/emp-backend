@@ -116,4 +116,19 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
             @Param("year") int year,
             @Param("month") int month
     );
+
+    @Query("""
+        SELECT a FROM Attendance a 
+        WHERE a.employee.personalId = :personalId 
+        AND a.employee.user.username = :username   
+        AND EXTRACT(MONTH FROM a.date) = :month 
+        AND EXTRACT(YEAR FROM a.date) = :year 
+        AND a.date <= CURRENT_DATE
+    """)
+    List<Attendance> findCurrentMonthAttendanceUpToToday(
+            @Param("username") String username,
+            @Param("personalId") String personalId,
+            @Param("month") int month,
+            @Param("year") int year
+    );
 }
